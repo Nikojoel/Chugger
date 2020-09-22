@@ -25,12 +25,15 @@ import com.example.chugger.fragments.StopWatchFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
     companion object {
         private const val LOCATION_REQUEST = 200
         private const val LOCATION_STRING = "Location"
         private const val DEVICE_ADDRESS = "D3:E0:2A:CB:0C:FE"
+
+        private const val xOffSet = 50
+        private const val zOffSet = 1050
     }
 
     private lateinit var btAdapter: BluetoothAdapter
@@ -39,7 +42,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btManager: BluetoothManager
     private lateinit var gatt: BluetoothGatt
     private lateinit var mainMenu: Menu
+    private lateinit var frag: StopWatchFragment
+
     private var connected = false
+    private var start = false
+    private var firstTime = true
+    private var negatives = false
+    private var userDrinkTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,11 +71,44 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.data.observe(this) {
             Timber.d(it)
+            val accData = it.split(",")
+            val accX = accData[0].toInt()
+            val accZ = accData[1].toInt()
+            if (accX > xOffSet && accZ < zOffSet && firstTime) {
+                Timber.d("start")
+                firstTime = false
+                startStopWatchFragment()
+            }
+            if (accX > 500 && accZ < 800 && accX < 750 && !negatives) {
+                Timber.d("1")
+                teksti.text = "1"
+                start = true
+            } else if (accX > 750 && accZ < 650 && accX < 950 && !negatives) {
+                Timber.d("2")
+                teksti.text = "2"
+            } else if (accX > 950 && accZ < 500 && !negatives) {
+                Timber.d("3")
+                teksti.text = "3"
+                negatives = true
+
+                // End timer when sensor is placed back on the table
+            } else if (accX < xOffSet && accZ > 1000 && start) {
+                destroyFragment()
+            }
         }
 
         connBtn.setOnClickListener {
-            getStopWatchFragment()
+            connectDevice()
         }
+    }
+
+    override fun getTime(time: Long) {
+        userDrinkTime = time
+        Timber.d("time was $time in milliseconds")
+    }
+
+    private fun destroyFragment() {
+        supportFragmentManager.fragments[0].onDestroy()
     }
 
     private fun connectDevice() {
@@ -78,36 +120,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun disconnectDevice() {
-        gatt.disconnect()
-        connected = false
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         mainMenu = menu!!
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
-    private fun getStopWatchFragment() {
+    private fun startStopWatchFragment() {
+        frag = StopWatchFragment.newInstance(gatt)
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.main_layout, StopWatchFragment.newInstance())
+            .replace(R.id.main_layout, frag)
             .addToBackStack(null)
             .commit()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.action_bluetooth -> {
-                if (!connected) {
-                    connectDevice()
-                    mainMenu.getItem(0).icon = ContextCompat.getDrawable(this, R.drawable.ic_bt_off)
-                } else {
-                    disconnectDevice()
-                    mainMenu.getItem(0).icon = ContextCompat.getDrawable(this, R.drawable.ic_bt)
-                }
-            }
             R.id.action_nfc -> Timber.d("NFC")
         }
         return super.onOptionsItemSelected(item)
