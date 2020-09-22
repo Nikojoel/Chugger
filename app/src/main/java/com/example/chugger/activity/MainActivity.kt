@@ -14,9 +14,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.chugger.BuildConfig
@@ -26,7 +24,6 @@ import com.example.chugger.bluetooth.GattCallBack
 import com.example.chugger.fragments.NfcFragment
 import com.example.chugger.fragments.StopWatchFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_nfc.*
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
@@ -36,8 +33,31 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         private const val LOCATION_STRING = "Location"
         private const val DEVICE_ADDRESS = "D3:E0:2A:CB:0C:FE"
 
-        private const val xOffSet = 50
-        private const val zOffSet = 1050
+        private const val xOffSet = 0.050
+        private const val zOffSet = 1.050
+        private const val zOffSetMax = 1.0
+
+        private const val gravity = 9.81
+        private const val zMax = -1.0F
+        private const val zMaxP = 1
+
+        fun calculateAngle(acc: Float) : Double {
+            return if (acc < zMax) {
+               kotlin.math.asin((gravity * (zMax * -1) / gravity))
+           } else if (acc == zMax && acc < 0) {
+                kotlin.math.asin((gravity * (acc * -1) / gravity))
+           } else if (acc > zMaxP) {
+                kotlin.math.asin((gravity * 1 / gravity))
+            } else if (acc > zMax && acc < 0) {
+                kotlin.math.asin((gravity * (acc * -1) / gravity))
+            } else {
+                kotlin.math.asin((gravity * acc / gravity))
+            }
+        }
+
+        fun convertToDegree(rads: Double) : Double {
+            return kotlin.math.round(Math.toDegrees(rads))
+        }
     }
 
     private lateinit var btAdapter: BluetoothAdapter
@@ -51,8 +71,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private var connected = false
     private var start = false
     private var firstTime = true
-    private var negatives = false
     private var userDrinkTime: Long = 0
+    private var negatives = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,27 +96,25 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         viewModel.data.observe(this) {
             Timber.d(it)
             val accData = it.split(",")
-            val accX = accData[0].toInt()
-            val accZ = accData[1].toInt()
+            val accX = accData[0].toFloat() / 1000
+            val accZ = accData[1].toFloat() / 1000
             if (accX > xOffSet && accZ < zOffSet && firstTime) {
                 Timber.d("start")
                 firstTime = false
                 startStopWatchFragment()
             }
-            if (accX > 500 && accZ < 800 && accX < 750 && !negatives) {
-                Timber.d("1")
-                teksti.text = "1"
-                start = true
-            } else if (accX > 750 && accZ < 650 && accX < 950 && !negatives) {
-                Timber.d("2")
-                teksti.text = "2"
-            } else if (accX > 950 && accZ < 500 && !negatives) {
-                Timber.d("3")
-                teksti.text = "3"
-                negatives = true
+            val xAngle = calculateAngle(accX)
+            val zAngle = calculateAngle(accZ)
+            Timber.d("angle from X ${convertToDegree(xAngle) + 7}}")
+            Timber.d("angle from Z ${convertToDegree(zAngle)}")
+            val xDeg = convertToDegree(xAngle) + 7
+            val zDeg = convertToDegree(zAngle)
+            if (xDeg > 15) start = true
+            if (zDeg < 5) negatives = true
+            teksti.text = if (negatives) "${90 + zDeg.toInt()} degrees" else "${xDeg.toInt()} degrees"
 
-                // End timer when sensor is placed back on the table
-            } else if (accX < xOffSet && accZ > 1000 && start) {
+            // End timer when sensor is placed back on the table
+            if (accX < xOffSet && accZ > zOffSetMax && start) {
                 destroyFragment()
             }
         }
