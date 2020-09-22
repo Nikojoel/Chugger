@@ -24,6 +24,7 @@ import com.example.chugger.R
 import com.example.chugger.bluetooth.BtViewModel
 import com.example.chugger.bluetooth.GattCallBack
 import com.example.chugger.fragments.NfcFragment
+import com.example.chugger.fragments.StopWatchFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_nfc.*
 import timber.log.Timber
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(findViewById(R.id.tool_bar))
-        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setTitle(R.string.app_name)
 
         hasPermissions()
         askBtPermission()
@@ -65,6 +66,10 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.data.observe(this) {
             Timber.d(it)
+        }
+
+        connBtn.setOnClickListener {
+            getStopWatchFragment()
         }
     }
 
@@ -91,6 +96,14 @@ class MainActivity : AppCompatActivity() {
         mainMenu = menu!!
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
+    }
+
+    private fun getStopWatchFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.main_layout, StopWatchFragment.newInstance())
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
