@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -17,11 +18,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import com.example.chugger.BuildConfig
 import com.example.chugger.R
 import com.example.chugger.bluetooth.BtViewModel
 import com.example.chugger.bluetooth.GattCallBack
+import com.example.chugger.fragments.NfcFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_nfc.*
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
@@ -61,7 +65,6 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.data.observe(this) {
             Timber.d(it)
-            dataText.text= it
         }
     }
 
@@ -69,7 +72,12 @@ class MainActivity : AppCompatActivity() {
         if (!btAdapter.isEnabled) {
             askBtPermission()
         } else {
-            gatt = device.connectGatt(this, false, GattCallBack(viewModel), BluetoothDevice.TRANSPORT_LE)
+            gatt = device.connectGatt(
+                this,
+                false,
+                GattCallBack(viewModel),
+                BluetoothDevice.TRANSPORT_LE
+            )
             connected = true
         }
     }
@@ -86,7 +94,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.action_bluetooth -> {
                 if (!connected) {
                     connectDevice()
@@ -96,14 +104,22 @@ class MainActivity : AppCompatActivity() {
                     mainMenu.getItem(0).icon = ContextCompat.getDrawable(this, R.drawable.ic_bt)
                 }
             }
-            R.id.action_nfc -> Timber.d("NFC")
+              R.id.action_nfc -> showNfcFragment()
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun hasPermissions(): Boolean {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 200)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                200
+            )
             return false
         }
         connBtn.isEnabled = true
@@ -115,6 +131,16 @@ class MainActivity : AppCompatActivity() {
         startActivity(enableBtIntent)
     }
 
+    private fun checkNfcSupport(): Boolean {
+        val nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+        if (!nfcAdapter.isEnabled) {
+            Timber.d("NFC disabled")
+        return false
+        }
+        return true
+    }
+
+
     private fun showAlert(permissions: Array<String>) {
         val builder = AlertDialog.Builder(this)
         builder.apply {
@@ -124,6 +150,28 @@ class MainActivity : AppCompatActivity() {
                 ActivityCompat.requestPermissions(this@MainActivity, permissions, LOCATION_REQUEST)
             }
         }.create().show()
+    }
+
+    private fun showNfcAlert() {
+        val builder = AlertDialog.Builder(this)
+        builder.apply {
+            setMessage("Nfc is needed to use this app")
+            setTitle("Unable to use NFC")
+            setPositiveButton("OK") { _, _ ->
+            }
+        }.create().show()
+    }
+
+    private fun showNfcFragment() {
+        if (checkNfcSupport()) {
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.main_layout, NfcFragment.newInstance())
+                .addToBackStack(null)
+                .commit()
+        } else {
+            showNfcAlert()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
