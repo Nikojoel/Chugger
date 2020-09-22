@@ -4,13 +4,18 @@ import android.Manifest
 import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.chugger.BuildConfig
 import com.example.chugger.R
@@ -19,22 +24,31 @@ import com.example.chugger.bluetooth.GattCallBack
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
-const val LOCATION_REQUEST = 200
-const val LOCATION_STRING = "Location"
-const val DEVICE_ADDRESS = "D3:E0:2A:CB:0C:FE"
-
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val LOCATION_REQUEST = 200
+        private const val LOCATION_STRING = "Location"
+        private const val DEVICE_ADDRESS = "D3:E0:2A:CB:0C:FE"
+    }
 
     private lateinit var btAdapter: BluetoothAdapter
     private lateinit var viewModel: BtViewModel
     private lateinit var device: BluetoothDevice
     private lateinit var btManager: BluetoothManager
+    private lateinit var gatt: BluetoothGatt
+    private lateinit var mainMenu: Menu
+    private var connected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        setSupportActionBar(findViewById(R.id.tool_bar))
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
         hasPermissions()
+        askBtPermission()
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
@@ -49,16 +63,44 @@ class MainActivity : AppCompatActivity() {
             Timber.d(it)
             dataText.text= it
         }
-
-        connBtn.setOnClickListener {
-            if (!btAdapter.isEnabled) {
-                askBtPermission()
-            } else {
-                device.connectGatt(this, false, GattCallBack(viewModel), BluetoothDevice.TRANSPORT_LE)
-            }
-        }
-
     }
+
+    private fun connectDevice() {
+        if (!btAdapter.isEnabled) {
+            askBtPermission()
+        } else {
+            gatt = device.connectGatt(this, false, GattCallBack(viewModel), BluetoothDevice.TRANSPORT_LE)
+            connected = true
+        }
+    }
+
+    private fun disconnectDevice() {
+        gatt.disconnect()
+        connected = false
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        mainMenu = menu!!
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_bluetooth -> {
+                if (!connected) {
+                    connectDevice()
+                    mainMenu.getItem(0).icon = ContextCompat.getDrawable(this, R.drawable.ic_bt_off)
+                } else {
+                    disconnectDevice()
+                    mainMenu.getItem(0).icon = ContextCompat.getDrawable(this, R.drawable.ic_bt)
+                }
+            }
+            R.id.action_nfc -> Timber.d("NFC")
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun hasPermissions(): Boolean {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 200)
