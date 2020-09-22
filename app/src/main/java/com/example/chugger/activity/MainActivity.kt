@@ -15,6 +15,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.chugger.BuildConfig
 import com.example.chugger.R
@@ -36,6 +37,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var device: BluetoothDevice
     private lateinit var btManager: BluetoothManager
     private lateinit var gatt: BluetoothGatt
+    private lateinit var mainMenu: Menu
+    private var connected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,25 +63,39 @@ class MainActivity : AppCompatActivity() {
             Timber.d(it)
             dataText.text= it
         }
+    }
 
-        connBtn.setOnClickListener {
-            if (!btAdapter.isEnabled) {
-                askBtPermission()
-            } else {
-               gatt = device.connectGatt(this, false, GattCallBack(viewModel), BluetoothDevice.TRANSPORT_LE)
-            }
+    private fun connectDevice() {
+        if (!btAdapter.isEnabled) {
+            askBtPermission()
+        } else {
+            gatt = device.connectGatt(this, false, GattCallBack(viewModel), BluetoothDevice.TRANSPORT_LE)
+            connected = true
         }
+    }
 
+    private fun disconnectDevice() {
+        gatt.disconnect()
+        connected = false
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu);
+        mainMenu = menu!!
+        menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.action_bluetooth -> Timber.d("BLUETOOTH")
+            R.id.action_bluetooth -> {
+                if (!connected) {
+                    connectDevice()
+                    mainMenu.getItem(0).icon = ContextCompat.getDrawable(this, R.drawable.ic_bt_off)
+                } else {
+                    disconnectDevice()
+                    mainMenu.getItem(0).icon = ContextCompat.getDrawable(this, R.drawable.ic_bt)
+                }
+            }
             R.id.action_nfc -> Timber.d("NFC")
         }
         return super.onOptionsItemSelected(item)
