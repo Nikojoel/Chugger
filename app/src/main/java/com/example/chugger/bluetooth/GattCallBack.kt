@@ -66,7 +66,7 @@ class GattCallBack(private val viewModel: BtViewModel): BluetoothGattCallback() 
         Timber.d("onDescriptorWrite")
     }
     override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-        val data = characteristic.getStringValue(0).replace(" ", "\n")
+        val data = characteristic.getStringValue(0)
         Timber.d("onCharacteristicChanged: $data")
         viewModel.changeValue(data)
     }
