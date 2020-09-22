@@ -10,19 +10,32 @@
     <include
         android:id="@+id/tool_bar"
         layout="@layout/tool_bar"/>
+
+    <TextView
+        android:id="@+id/teksti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="174dp"
+        android:layout_marginTop="170dp"
+        android:layout_marginEnd="175dp"
+        android:layout_marginBottom="258dp"
+        android:text="test"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/connBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tool_bar" />
+
     <Button
         android:id="@+id/connBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="151dp"
         android:layout_marginBottom="150dp"
-        android:text="Connect"
+        android:text="Start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
          />
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

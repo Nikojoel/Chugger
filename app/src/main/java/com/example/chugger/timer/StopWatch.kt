@@ -1,7 +1,5 @@
 package com.example.chugger.timer
 
-import android.util.Log
-
 class Stopwatch {
 
     private var startTime: Long = 0
@@ -35,9 +33,12 @@ class Stopwatch {
 
             if (time.contains("59")) {
                 stop()
-                Log.d("DBG", "paska")
             }
         }
         return elapsed
+    }
+
+    fun getTotal(): Long {
+        return currentTime
     }
 }

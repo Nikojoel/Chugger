@@ -1,5 +1,7 @@
 package com.example.chugger.fragments
 
+import android.bluetooth.BluetoothGatt
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -17,47 +19,56 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-class StopWatchFragment : Fragment() {
+class StopWatchFragment() : Fragment() {
 
     private val stopWatch = Stopwatch()
+    private lateinit var helper: StopWatchHelper
 
     companion object {
-        fun newInstance() : StopWatchFragment {
+        private lateinit var gatt: BluetoothGatt
+        fun newInstance(gatt: BluetoothGatt): StopWatchFragment {
+            this.gatt = gatt
             return StopWatchFragment()
         }
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        helper = context as StopWatchHelper
+    }
+
+    override fun onDestroy() {
+        GlobalScope.launch(Dispatchers.Main) {
+            stopWatch.stop()
+            gatt.close()
+            helper.getTime(stopWatch.getTotal())
+        }
+        super.onDestroy()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view=  inflater.inflate(R.layout.fragment_stop_watch, container, false)
+        val view = inflater.inflate(R.layout.fragment_stop_watch, container, false)
 
-        view.startBtn.setOnClickListener {
-            val handler = Handler()
-            stopWatch.start()
-            view.milliSeconds.visibility = View.VISIBLE
-            view.seconds.visibility = View.VISIBLE
-            handler.postDelayed(object : Runnable {
-                override fun run() {
-                    view.milliSeconds.text = stopWatch.elapsedMill()
-                    view.seconds.text = stopWatch.elapsedSec()
-                    handler.postDelayed(this, 100)
-                }
-            }, 100)
-        }
-
-        view.stopBtn.setOnClickListener {
-            GlobalScope.launch(Dispatchers.Main) {
-                stopWatch.stop()
-                withContext(Dispatchers.Main) {
-                    activity?.onBackPressed()
-                }
+        val handler = Handler()
+        stopWatch.start()
+        view.milliSeconds.visibility = View.VISIBLE
+        view.seconds.visibility = View.VISIBLE
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                view.milliSeconds.text = stopWatch.elapsedMill()
+                view.seconds.text = stopWatch.elapsedSec()
+                handler.postDelayed(this, 100)
             }
-        }
+        }, 100)
+
         return view
     }
 
-
+    interface StopWatchHelper {
+        fun getTime(time: Long)
+    }
 }

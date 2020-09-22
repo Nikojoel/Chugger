@@ -10,13 +10,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginTop="314dp"
         android:text="00:"
         android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/stopBtn"
         app:layout_constraintEnd_toStartOf="@+id/milliSeconds"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/milliSeconds"
@@ -27,29 +27,4 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/seconds"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/seconds" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/startBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="22dp"
-        android:backgroundTint="#4CAF50"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/stopBtn"
-        app:layout_constraintTop_toTopOf="@+id/stopBtn"
-        app:rippleColor="#00FFFFFF"
-        app:srcCompat="@drawable/ic_calib" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/stopBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="22dp"
-        android:layout_marginBottom="232dp"
-        android:backgroundTint="#FF5722"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/startBtn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:rippleColor="#00FFFFFF"
-        app:srcCompat="@drawable/ic_stop" />
 </androidx.constraintlayout.widget.ConstraintLayout>
