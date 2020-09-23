@@ -1,9 +1,11 @@
 package com.example.chugger.activity
 
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
+import android.nfc.NfcManager
 import android.nfc.Tag
 import android.nfc.tech.IsoDep
 import android.os.Bundle
@@ -13,35 +15,38 @@ import timber.log.Timber
 
 class NfcActivity: AppCompatActivity() {
 
-    private var nfcAdapter: NfcAdapter? = null
+    private lateinit var nfcAdapter: NfcAdapter
+    private lateinit var nfcManager: NfcManager
+    private lateinit var pendingIntent: PendingIntent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        nfcManager = getSystemService(Context.NFC_SERVICE) as NfcManager
+        nfcAdapter = nfcManager.defaultAdapter
 
         // Read all tags when app is running and in the foreground (FLAG_ACTIVITY_SINGLE_TOP)
         // Create a generic PendingIntent that will be deliver to this activity. The NFC stack
         // will fill in the intent with the details of the discovered tag before delivering to
         // this activity.
-        var nfcPendingIntent = PendingIntent.getActivity(this, 0, Intent(this,
-            javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+        pendingIntent = PendingIntent.getActivity(this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
 
-        if (nfcPendingIntent == null) {
-            nfcPendingIntent = PendingIntent.getActivity(this, 0, Intent(), 0)
+        if (pendingIntent == null) {
+            pendingIntent = PendingIntent.getActivity(this, 0, Intent(), 0)
         }
-        nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
-        // Get all NDEF discovered intents
-        // Makes sure the app gets all discovered NDEF messages as long as it's in the foreground.
     }
 
     override fun onResume() {
         super.onResume()
-
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null)
+        // Get all NDEF discovered intents
+        // Makes sure the app gets all discovered NDEF messages as long as it's in the foreground.
     }
 
     override fun onPause() {
         super.onPause()
         // Disable foreground dispatch, as this activity is no longer in the foreground
-        nfcAdapter?.disableForegroundDispatch(this);
+        nfcAdapter.disableForegroundDispatch(this);
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -52,8 +57,8 @@ class NfcActivity: AppCompatActivity() {
         if (intent != null) processIntent(intent)
     }
 
-    fun processIntent(checkIntent: Intent) {
-        Log.d("DBG", "prcesss Intent")
+    private fun processIntent(checkIntent: Intent) {
+        Timber.d("process intent $intent")
         if (checkIntent.action == NfcAdapter.ACTION_TAG_DISCOVERED) {
             val tag: Tag? = checkIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
             Timber.d("Raw tag $tag")
@@ -64,7 +69,7 @@ class NfcActivity: AppCompatActivity() {
         // Check if intent has the action of a discovered NFC tag
         // with NDEF formatted contents
         else if (checkIntent.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
-            Timber.d("New NDEF intent $checkIntent")
+            //Timber.d("New NDEF intent $checkIntent")
             // Retrieve the raw NDEF message from the tag
             val rawMessages = checkIntent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
             Timber.d("Raw messages ${rawMessages?.size}")

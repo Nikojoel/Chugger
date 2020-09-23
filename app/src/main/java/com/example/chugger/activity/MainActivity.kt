@@ -67,7 +67,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private lateinit var btManager: BluetoothManager
     private lateinit var gatt: BluetoothGatt
     private lateinit var mainMenu: Menu
-    private lateinit var frag: StopWatchFragment
     private lateinit var nfcActivity: NfcActivity
     private lateinit var stopWatchfrag: StopWatchFragment
     private lateinit var webFrag: WebFragment
@@ -246,8 +245,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
     private fun showNfcActivity() {
         if (checkNfcSupport()) {
-                val intent = Intent(this, NfcActivity::class.java)
-                startActivity(intent)
+            val intent = Intent(this, NfcActivity::class.java)
+            startActivity(intent)
         } else {
             showNfcAlert()
         }
@@ -264,13 +263,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
                     }
                 }
             }
-        }
-    }
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-
-        if (intent != null) {
-            nfcActivity.processIntent(intent)
         }
     }
 }
