@@ -9,8 +9,8 @@ import android.nfc.NfcManager
 import android.nfc.Tag
 import android.nfc.tech.IsoDep
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.chugger.R
 import timber.log.Timber
 
 class NfcActivity: AppCompatActivity() {
@@ -21,6 +21,7 @@ class NfcActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_nfc)
 
         nfcManager = getSystemService(Context.NFC_SERVICE) as NfcManager
         nfcAdapter = nfcManager.defaultAdapter
