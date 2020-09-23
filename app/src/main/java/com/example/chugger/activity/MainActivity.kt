@@ -21,7 +21,6 @@ import com.example.chugger.BuildConfig
 import com.example.chugger.R
 import com.example.chugger.bluetooth.BtViewModel
 import com.example.chugger.bluetooth.GattCallBack
-import com.example.chugger.fragments.NfcFragment
 import com.example.chugger.fragments.StopWatchFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
@@ -67,6 +66,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private lateinit var gatt: BluetoothGatt
     private lateinit var mainMenu: Menu
     private lateinit var frag: StopWatchFragment
+    private lateinit var nfcActivity: NfcActivity
 
     private var connected = false
     private var start = false
@@ -77,6 +77,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        nfcActivity = NfcActivity()
 
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setTitle(R.string.app_name)
@@ -164,7 +166,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.action_nfc -> showNfcFragment()
+            R.id.action_nfc -> showNfcActivity()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -222,13 +224,10 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         }.create().show()
     }
 
-    private fun showNfcFragment() {
+    private fun showNfcActivity() {
         if (checkNfcSupport()) {
-            supportFragmentManager
-                .beginTransaction()
-                .add(R.id.main_layout, NfcFragment.newInstance())
-                .addToBackStack(null)
-                .commit()
+                val intent = Intent(this, NfcActivity::class.java)
+                startActivity(intent)
         } else {
             showNfcAlert()
         }
@@ -245,6 +244,13 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
                     }
                 }
             }
+        }
+    }
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        if (intent != null) {
+            nfcActivity.processIntent(intent)
         }
     }
 }
