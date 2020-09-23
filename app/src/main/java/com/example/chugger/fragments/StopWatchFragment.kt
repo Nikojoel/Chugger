@@ -8,10 +8,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.chugger.R
 import com.example.chugger.timer.Stopwatch
+import kotlinx.android.synthetic.main.fragment_stop_watch.*
 import kotlinx.android.synthetic.main.fragment_stop_watch.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -38,11 +40,9 @@ class StopWatchFragment() : Fragment() {
     }
 
     override fun onDestroy() {
-        GlobalScope.launch(Dispatchers.Main) {
-            stopWatch.stop()
-            gatt.close()
-            helper.getTime(stopWatch.getTotal())
-        }
+        stopWatch.stop()
+        gatt.close()
+        helper.getTime(stopWatch.getTotal())
         super.onDestroy()
     }
 

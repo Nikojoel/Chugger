@@ -13,6 +13,7 @@ import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
@@ -23,6 +24,7 @@ import com.example.chugger.bluetooth.BtViewModel
 import com.example.chugger.bluetooth.GattCallBack
 import com.example.chugger.fragments.NfcFragment
 import com.example.chugger.fragments.StopWatchFragment
+import com.example.chugger.fragments.WebFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
@@ -66,7 +68,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private lateinit var btManager: BluetoothManager
     private lateinit var gatt: BluetoothGatt
     private lateinit var mainMenu: Menu
-    private lateinit var frag: StopWatchFragment
+    private lateinit var stopWatchfrag: StopWatchFragment
+    private lateinit var webFrag: WebFragment
 
     private var connected = false
     private var start = false
@@ -92,7 +95,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
         btAdapter = btManager.adapter
         device = btAdapter.getRemoteDevice(DEVICE_ADDRESS)
-
+        teksti.visibility = View.INVISIBLE
         viewModel.data.observe(this) {
             Timber.d(it)
             val accData = it.split(",")
@@ -102,6 +105,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
                 Timber.d("start")
                 firstTime = false
                 startStopWatchFragment()
+                teksti.visibility = View.VISIBLE
             }
             val xAngle = calculateAngle(accX)
             val zAngle = calculateAngle(accZ)
@@ -121,6 +125,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
         connBtn.setOnClickListener {
             connectDevice()
+            mainMenu.getItem(0).isEnabled = false
+            mainMenu.getItem(1).isEnabled = false
         }
     }
 
@@ -130,7 +136,9 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     }
 
     private fun destroyFragment() {
-        supportFragmentManager.fragments[0].onDestroy()
+        supportFragmentManager.popBackStack()
+        mainMenu.getItem(0).isEnabled = true
+        mainMenu.getItem(1).isEnabled = true
     }
 
     private fun connectDevice() {
@@ -154,10 +162,19 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     }
 
     private fun startStopWatchFragment() {
-        frag = StopWatchFragment.newInstance(gatt)
+        stopWatchfrag = StopWatchFragment.newInstance(gatt)
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_layout, frag)
+            .add(R.id.main_layout, stopWatchfrag)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun startWebFragment() {
+        webFrag = WebFragment.newInstance()
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.main_layout, webFrag)
             .addToBackStack(null)
             .commit()
     }
@@ -165,6 +182,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.action_nfc -> showNfcFragment()
+            R.id.action_web -> startWebFragment()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -180,6 +198,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 200
             )
+            connBtn.isEnabled = false
             return false
         }
         connBtn.isEnabled = true
