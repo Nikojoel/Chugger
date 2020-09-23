@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_marginTop="314dp"
+        android:text="00:"
         android:textSize="36sp"
         app:layout_constraintEnd_toStartOf="@+id/milliSeconds"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -21,10 +22,9 @@
         android:id="@+id/milliSeconds"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="368dp"
+        android:text="0"
         android:textSize="36sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@+id/seconds"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/seconds"
-        />
+        app:layout_constraintStart_toEndOf="@+id/seconds" />
 </androidx.constraintlayout.widget.ConstraintLayout>

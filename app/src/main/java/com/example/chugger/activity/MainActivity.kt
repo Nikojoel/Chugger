@@ -6,9 +6,11 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothManager
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.view.Menu
@@ -23,9 +25,9 @@ import com.example.chugger.R
 import com.example.chugger.bluetooth.BtViewModel
 import com.example.chugger.bluetooth.GattCallBack
 import com.example.chugger.fragments.StopWatchFragment
-import com.example.chugger.fragments.WebFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
+
 
 class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
@@ -33,6 +35,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         private const val LOCATION_REQUEST = 200
         private const val LOCATION_STRING = "Location"
         private const val DEVICE_ADDRESS = "D3:E0:2A:CB:0C:FE"
+        private const val url = "https://www.espruino.com/ide/"
 
         private const val xOffSet = 0.050
         private const val zOffSet = 1.050
@@ -69,7 +72,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private lateinit var mainMenu: Menu
     private lateinit var nfcActivity: NfcActivity
     private lateinit var stopWatchfrag: StopWatchFragment
-    private lateinit var webFrag: WebFragment
 
     private var connected = false
     private var start = false
@@ -172,21 +174,24 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
             .commit()
     }
 
-    private fun startWebFragment() {
-        webFrag = WebFragment.newInstance()
-        supportFragmentManager
-            .beginTransaction()
-            .add(R.id.main_layout, webFrag)
-            .addToBackStack(null)
-            .commit()
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.action_nfc -> showNfcActivity()
-            R.id.action_web -> startWebFragment()
+            R.id.action_web -> openChrome()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun openChrome() {
+        try {
+            val uri = Uri.parse("googlechrome://navigate?url=$url")
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Timber.d("exception in chrome $e")
+            // Chrome is probably not installed
+        }
     }
 
     private fun hasPermissions(): Boolean {
@@ -252,7 +257,11 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 200) {
             when (grantResults[0]) {
