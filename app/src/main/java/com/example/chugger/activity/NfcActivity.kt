@@ -30,10 +30,6 @@ class NfcActivity: AppCompatActivity() {
         // will fill in the intent with the details of the discovered tag before delivering to
         // this activity.
         pendingIntent = PendingIntent.getActivity(this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
-
-        if (pendingIntent == null) {
-            pendingIntent = PendingIntent.getActivity(this, 0, Intent(), 0)
-        }
     }
 
     override fun onResume() {
