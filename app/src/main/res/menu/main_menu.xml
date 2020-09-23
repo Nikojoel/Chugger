@@ -10,4 +10,10 @@
         android:title="NFC"
         android:icon="@drawable/ic_nfc"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_web"
+        android:orderInCategory="200"
+        android:title="Web"
+        android:icon="@drawable/ic_ide"
+        app:showAsAction="ifRoom"/>
 </menu>
