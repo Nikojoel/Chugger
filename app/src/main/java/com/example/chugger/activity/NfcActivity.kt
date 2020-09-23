@@ -9,8 +9,10 @@ import android.nfc.NfcManager
 import android.nfc.Tag
 import android.nfc.tech.IsoDep
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.chugger.R
+import kotlinx.android.synthetic.main.activity_nfc.*
 import timber.log.Timber
 
 class NfcActivity: AppCompatActivity() {
@@ -23,14 +25,20 @@ class NfcActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nfc)
 
+        setSupportActionBar(findViewById(R.id.tool_bar))
+        supportActionBar?.setTitle(R.string.app_name)
+
         nfcManager = getSystemService(Context.NFC_SERVICE) as NfcManager
         nfcAdapter = nfcManager.defaultAdapter
+
 
         // Read all tags when app is running and in the foreground (FLAG_ACTIVITY_SINGLE_TOP)
         // Create a generic PendingIntent that will be deliver to this activity. The NFC stack
         // will fill in the intent with the details of the discovered tag before delivering to
         // this activity.
         pendingIntent = PendingIntent.getActivity(this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+
+        Toast.makeText(this, "Scan your tag to receive board data", Toast.LENGTH_LONG).show()
     }
 
     override fun onResume() {
@@ -95,6 +103,12 @@ class NfcActivity: AppCompatActivity() {
                     if (curRecord.toUri() != null) {
                         // URI NDEF Tag
                         Timber.d("- URI ${curRecord.toUri()}")
+                        val data = curRecord.toUri().toString().split(",")
+
+                        battery.text = "${data[0]} V"
+                        temperature.text = "${data[1]} °C"
+                        pressure.text= "${data[2]} hPa"
+                        humidity.text = "${data[3]} %"
                     } else {
                         // Other NDEF Tags - simply print the payload
                         Timber.d("- Contents ${curRecord.payload}")
