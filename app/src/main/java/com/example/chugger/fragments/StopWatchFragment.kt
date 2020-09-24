@@ -58,6 +58,9 @@ class StopWatchFragment() : Fragment() {
             override fun run() {
                 view.milliSeconds.text = stopWatch.elapsedMill()
                 view.seconds.text = stopWatch.elapsedSec()
+                if (progBar != null) {
+                    progBar.progress = progBar.progress - 1
+                }
                 handler.postDelayed(this, 100)
             }
         }, 100)

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.chugger.R
 import com.example.chugger.database.DbUserModel
@@ -39,6 +40,7 @@ class EditUserFragment : Fragment() {
                 Log.d("DBG", "${user}")
                 ump.insertNew(user)
                 withContext(Dispatchers.Main) {
+                    Toast.makeText(activity, "Saved", Toast.LENGTH_SHORT).show()
                     activity?.onBackPressed()
                 }
             }
