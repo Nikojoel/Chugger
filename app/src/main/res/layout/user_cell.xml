@@ -9,13 +9,13 @@
         android:id="@+id/userName"
         android:layout_width="142dp"
         android:layout_height="wrap_content"
-        android:text="Username"
+        android:text="@string/username"
         android:textSize="24sp" />
 
     <TextView
         android:id="@+id/userTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time"
+        android:text="@string/time"
         android:textSize="24sp" />
 </LinearLayout>

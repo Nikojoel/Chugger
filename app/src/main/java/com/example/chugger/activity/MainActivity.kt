@@ -2,7 +2,6 @@ package com.example.chugger.activity
 
 import android.Manifest
 import android.app.AlertDialog
-import android.app.Fragment
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
@@ -14,7 +13,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -27,23 +25,17 @@ import com.example.chugger.BuildConfig
 import com.example.chugger.R
 import com.example.chugger.bluetooth.BtViewModel
 import com.example.chugger.bluetooth.GattCallBack
-import com.example.chugger.database.User
 import com.example.chugger.fragments.DbFragment
 import com.example.chugger.fragments.EditUserFragment
 import com.example.chugger.fragments.StopWatchFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
-import java.lang.Exception
 
-
+private const val DEVICE_ADDRESS = "D3:E0:2A:CB:0C:FE"
+private const val LOCATION_REQUEST = 200
 class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
     companion object {
-        private const val LOCATION_REQUEST = 200
-        private const val LOCATION_STRING = "Location"
-        private const val DEVICE_ADDRESS = "D3:E0:2A:CB:0C:FE"
-        private const val url = "https://www.espruino.com/ide/"
-
         private const val xOffSet = 0.050
         private const val zOffSet = 1.050
         private const val zOffSetMax = 1.0
@@ -136,7 +128,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         Timber.d(data)
         if (toast) {
             teksti.visibility = View.INVISIBLE
-            showToast("Connected to ${device.name}", Toast.LENGTH_SHORT)
+            showToast(getString(R.string.connectToastString, device.name), Toast.LENGTH_SHORT)
             toast = false
         }
         val accData = data.split(",")
@@ -159,7 +151,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         if (xDeg > 15) start = true
         if (zDeg < 5) negatives = true
         teksti.text =
-            if (negatives) "${90 + zDeg.toInt()} degrees" else "${xDeg.toInt()} degrees"
+            if (negatives) getString(R.string.degreesTextString, 90 + zDeg.toInt()) else getString(R.string.degreesTextString, xDeg.toInt())
 
         // End timer when sensor is placed back on the table
         if (accX < xOffSet && accZ > zOffSetMax && start) {
@@ -209,7 +201,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         when (btAdapter.isEnabled) {
             false -> askBtPermission()
             true -> {
-                showToast("Connecting to ${device.name}...", Toast.LENGTH_SHORT)
+                showToast(getString(R.string.connectingToastString, device.name), Toast.LENGTH_SHORT)
                 gatt = device.connectGatt(
                     this,
                     false,
@@ -239,19 +231,19 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         stopWatchFrag = StopWatchFragment.newInstance()
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_layout, stopWatchFrag, "stopwatch")
+            .replace(R.id.main_layout, stopWatchFrag, getString(R.string.stopWatchTag))
             .addToBackStack(null)
             .commit()
     }
 
     private fun startDbFragment() {
-        val frag = supportFragmentManager.findFragmentByTag("db")
+        val frag = supportFragmentManager.findFragmentByTag(getString(R.string.dbTag))
         val manager = supportFragmentManager.beginTransaction()
         if (frag != null && frag.isVisible) {
-            manager.replace(R.id.main_layout, frag, "db").commit()
+            manager.replace(R.id.main_layout, frag, getString(R.string.dbTag)).commit()
         } else {
             manager
-                .replace(R.id.main_layout, DbFragment.newInstance(), "db")
+                .replace(R.id.main_layout, DbFragment.newInstance(), getString(R.string.dbTag))
                 .addToBackStack(null)
                 .commit()
         }
@@ -268,13 +260,13 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
     private fun openChrome() {
         try {
-            val uri = Uri.parse("googlechrome://navigate?url=$url")
+            val uri = Uri.parse(getString(R.string.chromeUrlString))
             val intent = Intent(Intent.ACTION_VIEW, uri)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
             Timber.d("exception in chrome $e")
-            showToast("Error while opening Chrome", Toast.LENGTH_SHORT)
+            showToast(getString(R.string.chromeErrorString), Toast.LENGTH_SHORT)
             // Chrome is probably not installed
         }
     }
@@ -319,9 +311,9 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private fun showAlert(permissions: Array<String>) {
         val builder = AlertDialog.Builder(this)
         builder.apply {
-            setMessage("$LOCATION_STRING is needed to use this app")
-            setTitle("Permission needed")
-            setPositiveButton("Turn on") { _, _ ->
+            setMessage(getString(R.string.locationString, LOCATION_REQUEST))
+            setTitle(getString(R.string.permissionNeededString))
+            setPositiveButton(getString(R.string.turnOnString)) { _, _ ->
                 ActivityCompat.requestPermissions(this@MainActivity, permissions, LOCATION_REQUEST)
             }
         }.create().show()
@@ -330,21 +322,21 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private fun showDBAlert() {
         val builder = AlertDialog.Builder(this)
         builder.apply {
-            setMessage("Your time was $userDrinkTime seconds. Would you like to save it?")
-            setTitle("New time")
-            setPositiveButton("Save") { _, _ ->
+            setMessage(getString(R.string.drinkTimeString, userDrinkTime))
+            setTitle(getString(R.string.newTimeString))
+            setPositiveButton(getString(R.string.saveTimeString)) { _, _ ->
                 startAddUserFragment()
             }
-            setNegativeButton("Close") { _, _ -> }
+            setNegativeButton(getString(R.string.closeAlertString)) { _, _ -> }
         }.create().show()
     }
 
     private fun showNfcAlert() {
         val builder = AlertDialog.Builder(this)
         builder.apply {
-            setMessage("Nfc is needed to use this feature")
-            setTitle("Unable to use NFC")
-            setPositiveButton("OK") { _, _ ->
+            setMessage(getString(R.string.nfcPermissionString))
+            setTitle(getString(R.string.nfcUnableString))
+            setPositiveButton(getString(R.string.okString)) { _, _ ->
             }
         }.create().show()
     }

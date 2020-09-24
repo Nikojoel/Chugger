@@ -37,10 +37,9 @@ class EditUserFragment : Fragment() {
         view.addUserButton.setOnClickListener {
             GlobalScope.launch {
                 val user = User(0, view.editUserName.text.toString(), time)
-                Log.d("DBG", "${user}")
                 ump.insertNew(user)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(activity, "Saved", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, getString(R.string.savedString), Toast.LENGTH_SHORT).show()
                     activity?.onBackPressed()
                 }
             }
