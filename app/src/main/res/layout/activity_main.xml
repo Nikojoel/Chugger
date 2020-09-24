@@ -34,7 +34,7 @@
         android:layout_marginTop="477dp"
         android:layout_marginEnd="161dp"
         android:layout_marginBottom="49dp"
-        android:text="Start"
+        android:text="@string/startBtnString"
         app:layout_constraintBottom_toTopOf="@+id/teksti"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="84dp"
-                    android:text="Add your time"
+                    android:text="@string/addUserTimeString"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 <EditText
@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:hint="Username" />
+                    android:hint="@string/username" />
 
                 <Button
                     android:id="@+id/addUserButton"
@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:elevation="2dp"
-                    android:text="Add"
+                    android:text="@string/add"
                     app:icon="@drawable/ic_nfc" />
             </LinearLayout>
         </LinearLayout>

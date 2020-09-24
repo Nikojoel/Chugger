@@ -8,20 +8,20 @@
     <item
         android:id="@+id/action_db"
         android:orderInCategory="202"
-        android:title="Scores"
+        android:title="@string/scores"
         android:icon="@drawable/ic_people"
         app:showAsAction="ifRoom"
         />
     <item
         android:id="@+id/action_nfc"
         android:orderInCategory="201"
-        android:title="NFC"
+        android:title="@string/nfc"
         android:icon="@drawable/ic_nfc"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_web"
         android:orderInCategory="200"
-        android:title="Web"
+        android:title="@string/web"
         android:icon="@drawable/ic_ide"
         app:showAsAction="ifRoom"/>
 </menu>

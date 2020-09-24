@@ -40,7 +40,7 @@ class NfcActivity: AppCompatActivity() {
         // this activity.
         pendingIntent = PendingIntent.getActivity(this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
 
-        Toast.makeText(this, "Scan your tag to receive board data", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, getString(R.string.nfcTagString), Toast.LENGTH_LONG).show()
     }
 
     override fun onResume() {
@@ -107,9 +107,9 @@ class NfcActivity: AppCompatActivity() {
                         Timber.d("- URI ${curRecord.toUri()}")
                         val data = curRecord.toUri().toString().split(",")
 
-                        battery.text = "${data[0]} V"
-                        temperature.text = "${data[1]} °C"
-                        pressure.text= "${data[2]} hPa"
+                        battery.text = getString(R.string.nfcBatteryString, data[0])
+                        temperature.text = getString(R.string.nfcTempString, data[1])
+                        pressure.text= getString(R.string.nfcPressureString, data[2])
                         humidity.text = "${data[3]} %"
                     } else {
                         // Other NDEF Tags - simply print the payload

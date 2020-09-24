@@ -1,3 +1,41 @@
 <resources>
     <string name="app_name">Chugger</string>
+    <string name="startBtnString">Start</string>
+    <string name="connectToastString">"Connected to %1$s"</string>
+    <string name="degreesTextString">%1$d degrees</string>
+    <string name="connectingToastString">Connecting to %1$s…</string>
+    <string name="stopWatchTag" translatable="false">stopwatch</string>
+    <string name="dbTag" translatable="false">db</string>
+    <string name="chromeErrorString">Error while opening Chrome</string>
+    <string name="chromeUrlString" translatable="false">googlechrome://navigate?url=https://www.espruino.com/ide/</string>
+    <string name="locationString">%1$d is needed to use this app</string>
+    <string name="permissionNeededString">Permission needed</string>
+    <string name="turnOnString">Turn on</string>
+    <string name="drinkTimeString">Your time was %1s seconds. Would you like to save it?</string>
+    <string name="newTimeString">New time</string>
+    <string name="saveTimeString">Save</string>
+    <string name="closeAlertString">Close</string>
+    <string name="nfcPermissionString">NFC is needed to use this feature</string>
+    <string name="nfcUnableString">Unable to use NFC</string>
+    <string name="okString" translatable="false">OK</string>
+    <string name="savedString">Saved</string>
+    <string name="nfcTagString">Scan your tag to receive board data</string>
+    <string name="nfcBatteryString" translatable="false">%1$s V</string>
+    <string name="nfcTempString" translatable="false">%1$s °C</string>
+    <string name="nfcPressureString" translatable="false">%1$s hPa</string>
+    <string name="nfcHumidString" translatable="false">%1$s %</string>
+    <string name="username">Username</string>
+    <string name="time">Time</string>
+    <string name="_00" translatable="false">00:</string>
+    <string name="_0" translatable="false">0</string>
+    <string name="addUserTimeString">Add your time</string>
+    <string name="add">Add</string>
+    <string name="battery">Battery</string>
+    <string name="blankDashString" translatable="false">--</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidity">Humidity</string>
+    <string name="atmospheric_pressure">Atmospheric pressure</string>
+    <string name="scores" translatable="false">Scores</string>
+    <string name="nfc" translatable="false">NFC</string>
+    <string name="web" translatable="false">Web</string>
 </resources>
