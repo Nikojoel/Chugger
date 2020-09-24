@@ -27,9 +27,7 @@ class StopWatchFragment() : Fragment() {
     private lateinit var helper: StopWatchHelper
 
     companion object {
-        private lateinit var gatt: BluetoothGatt
-        fun newInstance(gatt: BluetoothGatt): StopWatchFragment {
-            this.gatt = gatt
+        fun newInstance(): StopWatchFragment {
             return StopWatchFragment()
         }
     }
@@ -41,7 +39,6 @@ class StopWatchFragment() : Fragment() {
 
     override fun onDestroy() {
         stopWatch.stop()
-        gatt.close()
         helper.getTime(stopWatch.getTotal())
         super.onDestroy()
     }
@@ -69,6 +66,6 @@ class StopWatchFragment() : Fragment() {
     }
 
     interface StopWatchHelper {
-        fun getTime(time: Long)
+        fun getTime(time: Int)
     }
 }

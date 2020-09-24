@@ -4,7 +4,7 @@ class Stopwatch {
 
     private var startTime: Long = 0
     private var running = false
-    private var currentTime: Long = 0
+    private var currentTime: Int = 0
 
     fun start() {
         startTime = System.currentTimeMillis()
@@ -13,7 +13,7 @@ class Stopwatch {
 
     fun stop() {
         running = false
-        currentTime = System.currentTimeMillis() - startTime
+        currentTime = (System.currentTimeMillis() - startTime).toInt()
     }
 
     fun elapsedMill(): String {
@@ -38,7 +38,7 @@ class Stopwatch {
         return elapsed
     }
 
-    fun getTotal(): Long {
+    fun getTotal(): Int {
         return currentTime
     }
 }
