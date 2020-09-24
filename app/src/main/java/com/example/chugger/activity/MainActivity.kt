@@ -88,7 +88,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private lateinit var stopWatchFrag: StopWatchFragment
     private lateinit var userAddFrag: EditUserFragment
     private lateinit var userDrinkTime: String
-    private lateinit var dbFrag: DbFragment
 
     private var connected = false
     private var start = false
@@ -117,76 +116,91 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         teksti.visibility = View.INVISIBLE
 
         viewModel.data.observe(this) {
-            Timber.d(it)
-            if (toast) {
-                teksti.visibility = View.INVISIBLE
-                showToast("Connected to ${device.name}", Toast.LENGTH_SHORT)
-                toast = false
-            }
-            val accData = it.split(",")
-            val accX = accData[0].toFloat() / 1000
-            val accZ = accData[1].toFloat() / 1000
-            if (accX > xOffSet && accZ < zOffSet && firstTime) {
-                Timber.d("start")
-                firstTime = false
-                startStopWatchFragment()
-                connBtn.isEnabled = false
-                teksti.visibility = View.VISIBLE
-            }
-            val xAngle = calculateAngle(accX)
-            val zAngle = calculateAngle(accZ)
-            Timber.d("angle from X ${convertToDegree(xAngle) + 7}}")
-            Timber.d("angle from Z ${convertToDegree(zAngle)}")
-            val xDeg = convertToDegree(xAngle) + 7
-            val zDeg = convertToDegree(zAngle)
-            if (xDeg > 15) start = true
-            if (zDeg < 5) negatives = true
-            teksti.text =
-                if (negatives) "${90 + zDeg.toInt()} degrees" else "${xDeg.toInt()} degrees"
-
-            // End timer when sensor is placed back on the table
-            if (accX < xOffSet && accZ > zOffSetMax && start) {
-                destroyFragment()
-                dbBtn.isEnabled = true
-                dbBtn.visibility = View.VISIBLE
-
-            }
+            startRunning(it)
         }
 
         connBtn.setOnClickListener {
             when (connected) {
-                true -> destroyFragment()
+                true -> {
+                    destroyFragment()
+                }
                 false -> {
                     connectDevice()
-                    mainMenu.getItem(0).isEnabled = false
-                    mainMenu.getItem(1).isEnabled = false
+                    enableMenu(false)
                 }
             }
         }
-        dbBtn.isEnabled = false
-        dbBtn.visibility = View.GONE
-        dbBtn.setOnClickListener {
-            startAddUserFragment()
+    }
+
+    private fun startRunning(data: String) {
+        Timber.d(data)
+        if (toast) {
+            teksti.visibility = View.INVISIBLE
+            showToast("Connected to ${device.name}", Toast.LENGTH_SHORT)
+            toast = false
+        }
+        val accData = data.split(",")
+        val accX = accData[0].toFloat() / 1000
+        val accZ = accData[1].toFloat() / 1000
+        // Start timer when off set values are
+        if (accX > xOffSet && accZ < zOffSet && firstTime) {
+            Timber.d("start")
+            firstTime = false
+            startStopWatchFragment()
+            connBtn.isEnabled = false
+            teksti.visibility = View.VISIBLE
+        }
+        val xAngle = calculateAngle(accX)
+        val zAngle = calculateAngle(accZ)
+        Timber.d("angle from X ${convertToDegree(xAngle) + 7}}")
+        Timber.d("angle from Z ${convertToDegree(zAngle)}")
+        val xDeg = convertToDegree(xAngle) + 7
+        val zDeg = convertToDegree(zAngle)
+        if (xDeg > 15) start = true
+        if (zDeg < 5) negatives = true
+        teksti.text =
+            if (negatives) "${90 + zDeg.toInt()} degrees" else "${xDeg.toInt()} degrees"
+
+        // End timer when sensor is placed back on the table
+        if (accX < xOffSet && accZ > zOffSetMax && start) {
+            destroyFragment()
         }
     }
 
-    override fun getTime(time: Int) {
-        userDrinkTime = convertToSeconds(time.toString().length, time.toString())
-        teksti.text = userDrinkTime
-        teksti.visibility = View.VISIBLE
-        Timber.d("time was $time in milliseconds, size ${time.toString().length}")
+    private fun enableMenu(onOff: Boolean) {
+        when (onOff) {
+            true -> {
+                mainMenu.getItem(0).isEnabled = true
+                mainMenu.getItem(1).isEnabled = true
+                mainMenu.getItem(2).isEnabled = true
+            }
+            false -> {
+                mainMenu.getItem(0).isEnabled = false
+                mainMenu.getItem(1).isEnabled = false
+                mainMenu.getItem(2).isEnabled = false
+            }
+        }
     }
 
-    private fun destroyFragment() {
-        supportFragmentManager.popBackStack()
-        gatt.close()
-        mainMenu.getItem(0).isEnabled = true
-        mainMenu.getItem(1).isEnabled = true
+    private fun setBooleans() {
         connected = false
         firstTime = true
         start = false
         toast = true
         negatives = false
+    }
+
+    override fun getTime(time: Int) {
+        userDrinkTime = convertToSeconds(time.toString().length, time.toString())
+        Timber.d("time was $time in milliseconds, size ${time.toString().length}")
+        showDBAlert()
+    }
+
+    private fun destroyFragment() {
+        supportFragmentManager.popBackStack()
+        gatt.close()
+        setBooleans()
+        enableMenu(true)
         connBtn.isEnabled = true
         teksti.visibility = View.GONE
     }
@@ -213,49 +227,33 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     }
 
     private fun startAddUserFragment() {
-        dbBtn.isEnabled = false
-        dbBtn.visibility = View.GONE
-        connBtn.isEnabled = false
-        connBtn.visibility = View.GONE
         userAddFrag = EditUserFragment.newInstance(userDrinkTime)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.main_layout, userAddFrag)
             .addToBackStack(null)
             .commit()
-        supportFragmentManager.addOnBackStackChangedListener {
-            if (supportFragmentManager.backStackEntryCount == 0) {
-                connBtn.isEnabled = true
-                teksti.visibility = View.VISIBLE
-                connBtn.visibility = View.VISIBLE
-            }
-        }
     }
 
     private fun startStopWatchFragment() {
         stopWatchFrag = StopWatchFragment.newInstance()
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_layout, stopWatchFrag)
+            .replace(R.id.main_layout, stopWatchFrag, "stopwatch")
             .addToBackStack(null)
             .commit()
     }
 
     private fun startDbFragment() {
-        connBtn.isEnabled = false
-        connBtn.visibility = View.GONE
-        dbFrag = DbFragment.newInstance()
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.main_layout, dbFrag)
-            .addToBackStack(null)
-            .commit()
-        supportFragmentManager.addOnBackStackChangedListener {
-            if (supportFragmentManager.backStackEntryCount == 0) {
-                connBtn.isEnabled = true
-                teksti.visibility = View.VISIBLE
-                connBtn.visibility = View.VISIBLE
-            }
+        val frag = supportFragmentManager.findFragmentByTag("db")
+        val manager = supportFragmentManager.beginTransaction()
+        if (frag != null && frag.isVisible) {
+            manager.replace(R.id.main_layout, frag, "db").commit()
+        } else {
+            manager
+                .replace(R.id.main_layout, DbFragment.newInstance(), "db")
+                .addToBackStack(null)
+                .commit()
         }
     }
 
@@ -329,10 +327,22 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         }.create().show()
     }
 
+    private fun showDBAlert() {
+        val builder = AlertDialog.Builder(this)
+        builder.apply {
+            setMessage("Your time was $userDrinkTime seconds. Would you like to save it?")
+            setTitle("New time")
+            setPositiveButton("Save") { _, _ ->
+                startAddUserFragment()
+            }
+            setNegativeButton("Close") { _, _ -> }
+        }.create().show()
+    }
+
     private fun showNfcAlert() {
         val builder = AlertDialog.Builder(this)
         builder.apply {
-            setMessage("Nfc is needed to use this app")
+            setMessage("Nfc is needed to use this feature")
             setTitle("Unable to use NFC")
             setPositiveButton("OK") { _, _ ->
             }
