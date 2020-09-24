@@ -27,6 +27,8 @@ class NfcActivity: AppCompatActivity() {
 
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setTitle(R.string.app_name)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         nfcManager = getSystemService(Context.NFC_SERVICE) as NfcManager
         nfcAdapter = nfcManager.defaultAdapter

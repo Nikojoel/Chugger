@@ -13,9 +13,11 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.nfc.NfcAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +29,7 @@ import com.example.chugger.bluetooth.GattCallBack
 import com.example.chugger.fragments.StopWatchFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
@@ -45,12 +48,12 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         private const val zMax = -1.0F
         private const val zMaxP = 1
 
-        fun calculateAngle(acc: Float) : Double {
+        private fun calculateAngle(acc: Float): Double {
             return if (acc < zMax) {
-               kotlin.math.asin((gravity * (zMax * -1) / gravity))
-           } else if (acc == zMax && acc < 0) {
+                kotlin.math.asin((gravity * (zMax * -1) / gravity))
+            } else if (acc == zMax && acc < 0) {
                 kotlin.math.asin((gravity * (acc * -1) / gravity))
-           } else if (acc > zMaxP) {
+            } else if (acc > zMaxP) {
                 kotlin.math.asin((gravity * 1 / gravity))
             } else if (acc > zMax && acc < 0) {
                 kotlin.math.asin((gravity * (acc * -1) / gravity))
@@ -59,8 +62,16 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
             }
         }
 
-        fun convertToDegree(rads: Double) : Double {
+        private fun convertToDegree(rads: Double): Double {
             return kotlin.math.round(Math.toDegrees(rads))
+        }
+
+        private fun convertToSeconds(length: Int, total: String): String {
+            return when (length) {
+                4 -> total.replace("${total[0]}", "${total[0]}:").dropLast(1)
+                5 -> total.replace("${total[1]}", "${total[1]}:").dropLast(1)
+                else -> "0"
+            }
         }
     }
 
@@ -70,20 +81,18 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private lateinit var btManager: BluetoothManager
     private lateinit var gatt: BluetoothGatt
     private lateinit var mainMenu: Menu
-    private lateinit var nfcActivity: NfcActivity
     private lateinit var stopWatchfrag: StopWatchFragment
+    private lateinit var userDrinkTime: String
 
     private var connected = false
     private var start = false
     private var firstTime = true
-    private var userDrinkTime: Long = 0
     private var negatives = false
+    private var toast = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        nfcActivity = NfcActivity()
 
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setTitle(R.string.app_name)
@@ -100,8 +109,14 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         btAdapter = btManager.adapter
         device = btAdapter.getRemoteDevice(DEVICE_ADDRESS)
         teksti.visibility = View.INVISIBLE
+
         viewModel.data.observe(this) {
             Timber.d(it)
+            if (toast) {
+                teksti.visibility = View.INVISIBLE
+                showToast("Connected to ${device.name}", Toast.LENGTH_SHORT)
+                toast = false
+            }
             val accData = it.split(",")
             val accX = accData[0].toFloat() / 1000
             val accZ = accData[1].toFloat() / 1000
@@ -109,6 +124,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
                 Timber.d("start")
                 firstTime = false
                 startStopWatchFragment()
+                connBtn.isEnabled = false
                 teksti.visibility = View.VISIBLE
             }
             val xAngle = calculateAngle(accX)
@@ -119,7 +135,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
             val zDeg = convertToDegree(zAngle)
             if (xDeg > 15) start = true
             if (zDeg < 5) negatives = true
-            teksti.text = if (negatives) "${90 + zDeg.toInt()} degrees" else "${xDeg.toInt()} degrees"
+            teksti.text =
+                if (negatives) "${90 + zDeg.toInt()} degrees" else "${xDeg.toInt()} degrees"
 
             // End timer when sensor is placed back on the table
             if (accX < xOffSet && accZ > zOffSetMax && start) {
@@ -128,34 +145,50 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         }
 
         connBtn.setOnClickListener {
-            connectDevice()
-            mainMenu.getItem(0).isEnabled = false
-            mainMenu.getItem(1).isEnabled = false
+            when (connected) {
+                true -> destroyFragment()
+                false -> {
+                    connectDevice()
+                    mainMenu.getItem(0).isEnabled = false
+                    mainMenu.getItem(1).isEnabled = false
+                }
+            }
         }
     }
 
-    override fun getTime(time: Long) {
-        userDrinkTime = time
-        Timber.d("time was $time in milliseconds")
+    override fun getTime(time: Int) {
+        userDrinkTime = convertToSeconds(time.toString().length, time.toString())
+        teksti.text = userDrinkTime
+        teksti.visibility = View.VISIBLE
+        Timber.d("time was $time in milliseconds, size ${time.toString().length}")
     }
 
     private fun destroyFragment() {
         supportFragmentManager.popBackStack()
+        gatt.close()
         mainMenu.getItem(0).isEnabled = true
         mainMenu.getItem(1).isEnabled = true
+        connected = false
+        firstTime = true
+        start = false
+        toast = true
+        negatives = false
+        connBtn.isEnabled = true
+        teksti.visibility = View.GONE
     }
 
     private fun connectDevice() {
-        if (!btAdapter.isEnabled) {
-            askBtPermission()
-        } else {
-            gatt = device.connectGatt(
-                this,
-                false,
-                GattCallBack(viewModel),
-                BluetoothDevice.TRANSPORT_LE
-            )
-            connected = true
+        when (btAdapter.isEnabled) {
+            false -> askBtPermission()
+            true -> {
+                showToast("Connecting to ${device.name}...", Toast.LENGTH_SHORT)
+                gatt = device.connectGatt(
+                    this,
+                    false,
+                    GattCallBack(viewModel),
+                    BluetoothDevice.TRANSPORT_LE
+                )
+            }
         }
     }
 
@@ -166,7 +199,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     }
 
     private fun startStopWatchFragment() {
-        stopWatchfrag = StopWatchFragment.newInstance(gatt)
+        stopWatchfrag = StopWatchFragment.newInstance()
         supportFragmentManager
             .beginTransaction()
             .add(R.id.main_layout, stopWatchfrag)
@@ -175,7 +208,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.action_nfc -> showNfcActivity()
             R.id.action_web -> openChrome()
         }
@@ -190,6 +223,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
             Timber.d("exception in chrome $e")
+            showToast("Error while opening Chrome", Toast.LENGTH_SHORT)
             // Chrome is probably not installed
         }
     }
@@ -221,9 +255,13 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         val nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         if (!nfcAdapter.isEnabled) {
             Timber.d("NFC disabled")
-        return false
+            return false
         }
         return true
+    }
+
+    private fun showToast(msg: String, length: Int) {
+        Toast.makeText(this, msg, length).show()
     }
 
 
