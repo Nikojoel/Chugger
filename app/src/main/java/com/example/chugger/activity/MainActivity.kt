@@ -2,6 +2,7 @@ package com.example.chugger.activity
 
 import android.Manifest
 import android.app.AlertDialog
+import android.app.Fragment
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
@@ -26,6 +27,9 @@ import com.example.chugger.BuildConfig
 import com.example.chugger.R
 import com.example.chugger.bluetooth.BtViewModel
 import com.example.chugger.bluetooth.GattCallBack
+import com.example.chugger.database.User
+import com.example.chugger.fragments.DbFragment
+import com.example.chugger.fragments.EditUserFragment
 import com.example.chugger.fragments.StopWatchFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
@@ -81,8 +85,10 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private lateinit var btManager: BluetoothManager
     private lateinit var gatt: BluetoothGatt
     private lateinit var mainMenu: Menu
-    private lateinit var stopWatchfrag: StopWatchFragment
+    private lateinit var stopWatchFrag: StopWatchFragment
+    private lateinit var userAddFrag: EditUserFragment
     private lateinit var userDrinkTime: String
+    private lateinit var dbFrag: DbFragment
 
     private var connected = false
     private var start = false
@@ -141,6 +147,9 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
             // End timer when sensor is placed back on the table
             if (accX < xOffSet && accZ > zOffSetMax && start) {
                 destroyFragment()
+                dbBtn.isEnabled = true
+                dbBtn.visibility = View.VISIBLE
+
             }
         }
 
@@ -153,6 +162,11 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
                     mainMenu.getItem(1).isEnabled = false
                 }
             }
+        }
+        dbBtn.isEnabled = false
+        dbBtn.visibility = View.GONE
+        dbBtn.setOnClickListener {
+            startAddUserFragment()
         }
     }
 
@@ -198,19 +212,58 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         return true
     }
 
-    private fun startStopWatchFragment() {
-        stopWatchfrag = StopWatchFragment.newInstance()
+    private fun startAddUserFragment() {
+        dbBtn.isEnabled = false
+        dbBtn.visibility = View.GONE
+        connBtn.isEnabled = false
+        connBtn.visibility = View.GONE
+        userAddFrag = EditUserFragment.newInstance(userDrinkTime)
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.main_layout, stopWatchfrag)
+            .replace(R.id.main_layout, userAddFrag)
             .addToBackStack(null)
             .commit()
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                connBtn.isEnabled = true
+                teksti.visibility = View.VISIBLE
+                connBtn.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun startStopWatchFragment() {
+        stopWatchFrag = StopWatchFragment.newInstance()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main_layout, stopWatchFrag)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun startDbFragment() {
+        connBtn.isEnabled = false
+        connBtn.visibility = View.GONE
+        dbFrag = DbFragment.newInstance()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main_layout, dbFrag)
+            .addToBackStack(null)
+            .commit()
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                connBtn.isEnabled = true
+                teksti.visibility = View.VISIBLE
+                connBtn.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_nfc -> showNfcActivity()
             R.id.action_web -> openChrome()
+            R.id.action_db -> startDbFragment()
         }
         return super.onOptionsItemSelected(item)
     }

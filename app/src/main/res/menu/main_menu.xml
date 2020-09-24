@@ -4,6 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
+
+    <item
+        android:id="@+id/action_db"
+        android:orderInCategory="202"
+        android:title="Scores"
+        android:icon="@drawable/ic_people"
+        app:showAsAction="ifRoom"
+        />
     <item
         android:id="@+id/action_nfc"
         android:orderInCategory="201"
