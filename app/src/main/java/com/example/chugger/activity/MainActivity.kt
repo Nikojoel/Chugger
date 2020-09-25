@@ -13,6 +13,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.nfc.NfcAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -25,16 +26,13 @@ import com.example.chugger.BuildConfig
 import com.example.chugger.R
 import com.example.chugger.bluetooth.BtViewModel
 import com.example.chugger.bluetooth.GattCallBack
-import com.example.chugger.fragments.ScreenSlideFragment
-import com.example.chugger.fragments.DbFragment
-import com.example.chugger.fragments.EditUserFragment
-import com.example.chugger.fragments.StopWatchFragment
+import com.example.chugger.fragments.*
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
 private const val DEVICE_ADDRESS = "D3:E0:2A:CB:0C:FE"
 private const val LOCATION_REQUEST = 200
-class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
+class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, AlertFragment.AlertHelper {
 
     companion object {
         private const val xOffSet = 0.050
@@ -77,12 +75,13 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private lateinit var device: BluetoothDevice
     private lateinit var btManager: BluetoothManager
     private lateinit var gatt: BluetoothGatt
-    private lateinit var mainMenu: Menu
     private lateinit var slideFragment: ScreenSlideFragment
     private lateinit var stopWatchFrag: StopWatchFragment
     private lateinit var userAddFrag: EditUserFragment
     private lateinit var userDrinkTime: String
+    private lateinit var alertFrag: AlertFragment
 
+    private var mainMenu: Menu? = null
     private var connected = false
     private var start = false
     private var firstTime = true
@@ -110,19 +109,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         teksti.visibility = View.GONE
         connBtn.visibility = View.GONE
 
-
-        slideFragment = ScreenSlideFragment.newInstance()
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.main_layout, slideFragment)
-            .addToBackStack(null)
-            .commit()
-        supportFragmentManager.addOnBackStackChangedListener {
-            if (supportFragmentManager.backStackEntryCount == 0) {
-                connBtn.visibility = View.VISIBLE
-                supportFragmentManager.removeOnBackStackChangedListener{}
-            }
-        }
+        startSlideFragment()
+        listenBackStack()
 
         viewModel.data.observe(this) {
             startRunning(it)
@@ -151,12 +139,12 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         val accData = data.split(",")
         val accX = accData[0].toFloat() / 1000
         val accZ = accData[1].toFloat() / 1000
-        // Start timer when off set values are
+
+        // Start timer when off set values are exceeded
         if (accX > xOffSet && accZ < zOffSet && firstTime) {
             Timber.d("start")
             firstTime = false
             startStopWatchFragment()
-            connBtn.isEnabled = false
             teksti.visibility = View.VISIBLE
         }
         val xAngle = calculateAngle(accX)
@@ -179,14 +167,14 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private fun enableMenu(onOff: Boolean) {
         when (onOff) {
             true -> {
-                mainMenu.getItem(0).isEnabled = true
-                mainMenu.getItem(1).isEnabled = true
-                mainMenu.getItem(2).isEnabled = true
+                mainMenu?.getItem(0)?.isEnabled = true
+                mainMenu?.getItem(1)?.isEnabled = true
+                mainMenu?.getItem(2)?.isEnabled = true
             }
             false -> {
-                mainMenu.getItem(0).isEnabled = false
-                mainMenu.getItem(1).isEnabled = false
-                mainMenu.getItem(2).isEnabled = false
+                mainMenu?.getItem(0)?.isEnabled = false
+                mainMenu?.getItem(1)?.isEnabled = false
+                mainMenu?.getItem(2)?.isEnabled = false
             }
         }
     }
@@ -202,15 +190,13 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     override fun getTime(time: Int) {
         userDrinkTime = convertToSeconds(time.toString().length, time.toString())
         Timber.d("time was $time in milliseconds, size ${time.toString().length}")
-        showDBAlert()
+        startAlertFragment()
     }
 
     private fun destroyFragment() {
         supportFragmentManager.popBackStack()
         gatt.close()
         setBooleans()
-        enableMenu(true)
-        connBtn.isEnabled = true
         teksti.visibility = View.GONE
     }
 
@@ -230,9 +216,34 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        mainMenu = menu!!
+        mainMenu = menu
         menuInflater.inflate(R.menu.main_menu, menu)
+        enableMenu(false)
         return true
+    }
+
+    private fun listenBackStack() {
+        supportFragmentManager.addOnBackStackChangedListener {
+            Log.d("DBG", "frag manager count: ${supportFragmentManager.backStackEntryCount}")
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                connBtn.visibility = View.VISIBLE
+                connBtn.isEnabled = true
+                enableMenu(true)
+            } else if (supportFragmentManager.backStackEntryCount > 0 && mainMenu != null) {
+                connBtn.visibility = View.GONE
+                connBtn.isEnabled = false
+                enableMenu(false)
+            }
+        }
+    }
+
+    private fun startSlideFragment() {
+        slideFragment = ScreenSlideFragment.newInstance()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main_layout, slideFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun startAddUserFragment() {
@@ -248,7 +259,16 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         stopWatchFrag = StopWatchFragment.newInstance()
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_layout, stopWatchFrag, getString(R.string.stopWatchTag))
+            .replace(R.id.main_layout, stopWatchFrag)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun startAlertFragment() {
+        alertFrag = AlertFragment.newInstance(userDrinkTime)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main_layout, alertFrag)
             .addToBackStack(null)
             .commit()
     }
@@ -336,18 +356,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         }.create().show()
     }
 
-    private fun showDBAlert() {
-        val builder = AlertDialog.Builder(this)
-        builder.apply {
-            setMessage(getString(R.string.drinkTimeString, userDrinkTime))
-            setTitle(getString(R.string.newTimeString))
-            setPositiveButton(getString(R.string.saveTimeString)) { _, _ ->
-                startAddUserFragment()
-            }
-            setNegativeButton(getString(R.string.closeAlertString)) { _, _ -> }
-        }.create().show()
-    }
-
     private fun showNfcAlert() {
         val builder = AlertDialog.Builder(this)
         builder.apply {
@@ -383,5 +391,9 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
                 }
             }
         }
+    }
+
+    override fun startDbFrag() {
+        startAddUserFragment()
     }
 }
