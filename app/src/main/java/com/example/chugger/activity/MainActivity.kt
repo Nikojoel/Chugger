@@ -64,8 +64,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
         private fun convertToSeconds(length: Int, total: String): String {
             return when (length) {
-                4 -> total.replace("${total[0]}", "${total[0]}:").dropLast(1)
-                5 -> total.replace("${total[1]}", "${total[1]}:").dropLast(1)
+                4 -> total.dropLast(1).replace("${total[0]}", "${total[0]}:")
+                5 -> total.dropLast(1).replace("${total[1]}", "${total[1]}:")
                 else -> "0"
             }
         }
