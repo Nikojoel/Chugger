@@ -78,7 +78,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private lateinit var btManager: BluetoothManager
     private lateinit var gatt: BluetoothGatt
     private lateinit var mainMenu: Menu
-    private lateinit var stopWatchfrag: StopWatchFragment
     private lateinit var slideFragment: ScreenSlideFragment
     private lateinit var stopWatchFrag: StopWatchFragment
     private lateinit var userAddFrag: EditUserFragment
@@ -119,7 +118,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
             .addToBackStack(null)
             .commit()
         supportFragmentManager.addOnBackStackChangedListener {
-            Log.d("DBG", "back stack${supportFragmentManager.backStackEntryCount.toString()}")
             if (supportFragmentManager.backStackEntryCount == 0) {
                 connBtn.visibility = View.VISIBLE
                 supportFragmentManager.removeOnBackStackChangedListener{}
