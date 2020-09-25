@@ -15,10 +15,10 @@
         android:id="@+id/teksti"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="174dp"
-        android:layout_marginTop="49dp"
+        android:layout_marginStart="175dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="175dp"
-        android:layout_marginBottom="52dp"
+        android:layout_marginBottom="342dp"
         android:text="test"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -26,18 +26,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/connBtn" />
 
-    <Button
-        android:id="@+id/connBtn"
+    <TextView
+        android:id="@+id/teks23ti"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="162dp"
-        android:layout_marginTop="477dp"
-        android:layout_marginEnd="161dp"
-        android:layout_marginBottom="49dp"
-        android:text="Start"
-        app:layout_constraintBottom_toTopOf="@+id/teksti"
+        android:layout_marginStart="175dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="175dp"
+        android:layout_marginBottom="72dp"
+        android:text="test"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/connBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tool_bar" />
 
+    <Button
+        android:id="@+id/connBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="161dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="162dp"
+        android:layout_marginBottom="41dp"
+        android:background="@drawable/rounded_button"
+        android:text="Start"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toTopOf="@+id/teksti"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/teks23ti" />
 </androidx.constraintlayout.widget.ConstraintLayout>

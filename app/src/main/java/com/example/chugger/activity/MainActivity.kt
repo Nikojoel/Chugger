@@ -26,6 +26,7 @@ import com.example.chugger.BuildConfig
 import com.example.chugger.R
 import com.example.chugger.bluetooth.BtViewModel
 import com.example.chugger.bluetooth.GattCallBack
+import com.example.chugger.fragments.ScreenSlideFragment
 import com.example.chugger.fragments.StopWatchFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
@@ -82,6 +83,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private lateinit var gatt: BluetoothGatt
     private lateinit var mainMenu: Menu
     private lateinit var stopWatchfrag: StopWatchFragment
+    private lateinit var slideFragment: ScreenSlideFragment
     private lateinit var userDrinkTime: String
 
     private var connected = false
@@ -108,7 +110,23 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
         btAdapter = btManager.adapter
         device = btAdapter.getRemoteDevice(DEVICE_ADDRESS)
-        teksti.visibility = View.INVISIBLE
+        teksti.visibility = View.GONE
+        connBtn.visibility = View.GONE
+
+
+        slideFragment = ScreenSlideFragment.newInstance()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main_layout, slideFragment)
+            .addToBackStack(null)
+            .commit()
+        supportFragmentManager.addOnBackStackChangedListener {
+            Log.d("DBG", "back stack${supportFragmentManager.backStackEntryCount.toString()}")
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                connBtn.visibility = View.VISIBLE
+                supportFragmentManager.removeOnBackStackChangedListener{}
+            }
+        }
 
         viewModel.data.observe(this) {
             Timber.d(it)
