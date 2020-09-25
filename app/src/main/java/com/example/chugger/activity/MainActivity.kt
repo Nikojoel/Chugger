@@ -13,7 +13,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -27,20 +26,17 @@ import com.example.chugger.R
 import com.example.chugger.bluetooth.BtViewModel
 import com.example.chugger.bluetooth.GattCallBack
 import com.example.chugger.fragments.ScreenSlideFragment
+import com.example.chugger.fragments.DbFragment
+import com.example.chugger.fragments.EditUserFragment
 import com.example.chugger.fragments.StopWatchFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
-import java.lang.Exception
 
-
+private const val DEVICE_ADDRESS = "D3:E0:2A:CB:0C:FE"
+private const val LOCATION_REQUEST = 200
 class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
     companion object {
-        private const val LOCATION_REQUEST = 200
-        private const val LOCATION_STRING = "Location"
-        private const val DEVICE_ADDRESS = "D3:E0:2A:CB:0C:FE"
-        private const val url = "https://www.espruino.com/ide/"
-
         private const val xOffSet = 0.050
         private const val zOffSet = 1.050
         private const val zOffSetMax = 1.0
@@ -69,8 +65,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
 
         private fun convertToSeconds(length: Int, total: String): String {
             return when (length) {
-                4 -> total.replace("${total[0]}", "${total[0]}:").dropLast(1)
-                5 -> total.replace("${total[1]}", "${total[1]}:").dropLast(1)
+                4 -> total.dropLast(1).replace("${total[0]}", "${total[0]}:")
+                5 -> total.dropLast(1).replace("${total[1]}", "${total[1]}:")
                 else -> "0"
             }
         }
@@ -84,6 +80,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private lateinit var mainMenu: Menu
     private lateinit var stopWatchfrag: StopWatchFragment
     private lateinit var slideFragment: ScreenSlideFragment
+    private lateinit var stopWatchFrag: StopWatchFragment
+    private lateinit var userAddFrag: EditUserFragment
     private lateinit var userDrinkTime: String
 
     private var connected = false
@@ -129,68 +127,91 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         }
 
         viewModel.data.observe(this) {
-            Timber.d(it)
-            if (toast) {
-                teksti.visibility = View.INVISIBLE
-                showToast("Connected to ${device.name}", Toast.LENGTH_SHORT)
-                toast = false
-            }
-            val accData = it.split(",")
-            val accX = accData[0].toFloat() / 1000
-            val accZ = accData[1].toFloat() / 1000
-            if (accX > xOffSet && accZ < zOffSet && firstTime) {
-                Timber.d("start")
-                firstTime = false
-                startStopWatchFragment()
-                connBtn.isEnabled = false
-                teksti.visibility = View.VISIBLE
-            }
-            val xAngle = calculateAngle(accX)
-            val zAngle = calculateAngle(accZ)
-            Timber.d("angle from X ${convertToDegree(xAngle) + 7}}")
-            Timber.d("angle from Z ${convertToDegree(zAngle)}")
-            val xDeg = convertToDegree(xAngle) + 7
-            val zDeg = convertToDegree(zAngle)
-            if (xDeg > 15) start = true
-            if (zDeg < 5) negatives = true
-            teksti.text =
-                if (negatives) "${90 + zDeg.toInt()} degrees" else "${xDeg.toInt()} degrees"
-
-            // End timer when sensor is placed back on the table
-            if (accX < xOffSet && accZ > zOffSetMax && start) {
-                destroyFragment()
-            }
+            startRunning(it)
         }
 
         connBtn.setOnClickListener {
             when (connected) {
-                true -> destroyFragment()
+                true -> {
+                    destroyFragment()
+                }
                 false -> {
                     connectDevice()
-                    mainMenu.getItem(0).isEnabled = false
-                    mainMenu.getItem(1).isEnabled = false
+                    enableMenu(false)
                 }
             }
         }
     }
 
-    override fun getTime(time: Int) {
-        userDrinkTime = convertToSeconds(time.toString().length, time.toString())
-        teksti.text = userDrinkTime
-        teksti.visibility = View.VISIBLE
-        Timber.d("time was $time in milliseconds, size ${time.toString().length}")
+    private fun startRunning(data: String) {
+        Timber.d(data)
+        if (toast) {
+            teksti.visibility = View.INVISIBLE
+            showToast(getString(R.string.connectToastString, device.name), Toast.LENGTH_SHORT)
+            toast = false
+        }
+        val accData = data.split(",")
+        val accX = accData[0].toFloat() / 1000
+        val accZ = accData[1].toFloat() / 1000
+        // Start timer when off set values are
+        if (accX > xOffSet && accZ < zOffSet && firstTime) {
+            Timber.d("start")
+            firstTime = false
+            startStopWatchFragment()
+            connBtn.isEnabled = false
+            teksti.visibility = View.VISIBLE
+        }
+        val xAngle = calculateAngle(accX)
+        val zAngle = calculateAngle(accZ)
+        Timber.d("angle from X ${convertToDegree(xAngle) + 7}}")
+        Timber.d("angle from Z ${convertToDegree(zAngle)}")
+        val xDeg = convertToDegree(xAngle) + 7
+        val zDeg = convertToDegree(zAngle)
+        if (xDeg > 15) start = true
+        if (zDeg < 5) negatives = true
+        teksti.text =
+            if (negatives) getString(R.string.degreesTextString, 90 + zDeg.toInt()) else getString(R.string.degreesTextString, xDeg.toInt())
+
+        // End timer when sensor is placed back on the table
+        if (accX < xOffSet && accZ > zOffSetMax && start) {
+            destroyFragment()
+        }
     }
 
-    private fun destroyFragment() {
-        supportFragmentManager.popBackStack()
-        gatt.close()
-        mainMenu.getItem(0).isEnabled = true
-        mainMenu.getItem(1).isEnabled = true
+    private fun enableMenu(onOff: Boolean) {
+        when (onOff) {
+            true -> {
+                mainMenu.getItem(0).isEnabled = true
+                mainMenu.getItem(1).isEnabled = true
+                mainMenu.getItem(2).isEnabled = true
+            }
+            false -> {
+                mainMenu.getItem(0).isEnabled = false
+                mainMenu.getItem(1).isEnabled = false
+                mainMenu.getItem(2).isEnabled = false
+            }
+        }
+    }
+
+    private fun setBooleans() {
         connected = false
         firstTime = true
         start = false
         toast = true
         negatives = false
+    }
+
+    override fun getTime(time: Int) {
+        userDrinkTime = convertToSeconds(time.toString().length, time.toString())
+        Timber.d("time was $time in milliseconds, size ${time.toString().length}")
+        showDBAlert()
+    }
+
+    private fun destroyFragment() {
+        supportFragmentManager.popBackStack()
+        gatt.close()
+        setBooleans()
+        enableMenu(true)
         connBtn.isEnabled = true
         teksti.visibility = View.GONE
     }
@@ -199,7 +220,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         when (btAdapter.isEnabled) {
             false -> askBtPermission()
             true -> {
-                showToast("Connecting to ${device.name}...", Toast.LENGTH_SHORT)
+                showToast(getString(R.string.connectingToastString, device.name), Toast.LENGTH_SHORT)
                 gatt = device.connectGatt(
                     this,
                     false,
@@ -216,32 +237,55 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
         return true
     }
 
-    private fun startStopWatchFragment() {
-        stopWatchfrag = StopWatchFragment.newInstance()
+    private fun startAddUserFragment() {
+        userAddFrag = EditUserFragment.newInstance(userDrinkTime)
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.main_layout, stopWatchfrag)
+            .replace(R.id.main_layout, userAddFrag)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun startStopWatchFragment() {
+        stopWatchFrag = StopWatchFragment.newInstance()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main_layout, stopWatchFrag, getString(R.string.stopWatchTag))
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun startDbFragment() {
+        val frag = supportFragmentManager.findFragmentByTag(getString(R.string.dbTag))
+        val manager = supportFragmentManager.beginTransaction()
+        if (frag != null && frag.isVisible) {
+            manager.replace(R.id.main_layout, frag, getString(R.string.dbTag)).commit()
+        } else {
+            manager
+                .replace(R.id.main_layout, DbFragment.newInstance(), getString(R.string.dbTag))
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_nfc -> showNfcActivity()
             R.id.action_web -> openChrome()
+            R.id.action_db -> startDbFragment()
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun openChrome() {
         try {
-            val uri = Uri.parse("googlechrome://navigate?url=$url")
+            val uri = Uri.parse(getString(R.string.chromeUrlString))
             val intent = Intent(Intent.ACTION_VIEW, uri)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
             Timber.d("exception in chrome $e")
-            showToast("Error while opening Chrome", Toast.LENGTH_SHORT)
+            showToast(getString(R.string.chromeErrorString), Toast.LENGTH_SHORT)
             // Chrome is probably not installed
         }
     }
@@ -286,20 +330,32 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper {
     private fun showAlert(permissions: Array<String>) {
         val builder = AlertDialog.Builder(this)
         builder.apply {
-            setMessage("$LOCATION_STRING is needed to use this app")
-            setTitle("Permission needed")
-            setPositiveButton("Turn on") { _, _ ->
+            setMessage(getString(R.string.locationString, LOCATION_REQUEST))
+            setTitle(getString(R.string.permissionNeededString))
+            setPositiveButton(getString(R.string.turnOnString)) { _, _ ->
                 ActivityCompat.requestPermissions(this@MainActivity, permissions, LOCATION_REQUEST)
             }
+        }.create().show()
+    }
+
+    private fun showDBAlert() {
+        val builder = AlertDialog.Builder(this)
+        builder.apply {
+            setMessage(getString(R.string.drinkTimeString, userDrinkTime))
+            setTitle(getString(R.string.newTimeString))
+            setPositiveButton(getString(R.string.saveTimeString)) { _, _ ->
+                startAddUserFragment()
+            }
+            setNegativeButton(getString(R.string.closeAlertString)) { _, _ -> }
         }.create().show()
     }
 
     private fun showNfcAlert() {
         val builder = AlertDialog.Builder(this)
         builder.apply {
-            setMessage("Nfc is needed to use this app")
-            setTitle("Unable to use NFC")
-            setPositiveButton("OK") { _, _ ->
+            setMessage(getString(R.string.nfcPermissionString))
+            setTitle(getString(R.string.nfcUnableString))
+            setPositiveButton(getString(R.string.okString)) { _, _ ->
             }
         }.create().show()
     }

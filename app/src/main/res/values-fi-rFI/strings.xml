@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Chugger</string>
+    <string name="startBtnString">Aloita</string>
+    <string name="connectToastString">Yhdistetty %1$s</string>
+    <string name="degreesTextString">%1$d astetta</string>
+    <string name="connectingToastString">Yhdistetään %1$s…</string>
+    <string name="chromeErrorString">Ongelma käynnistäessä Chromea</string>
+    <string name="locationString">%1$d vaaditaan apin käyttämiseen</string>
+    <string name="permissionNeededString">Oikeuksia vaaditaan</string>
+    <string name="turnOnString">Päälle</string>
+    <string name="drinkTimeString">Aikasi oli %1$s sekuntia. Tallennetaanko tulos?</string>
+    <string name="newTimeString">Uusi aika</string>
+    <string name="saveTimeString">Tallenna</string>
+    <string name="closeAlertString">Sulje</string>
+    <string name="nfcPermissionString">Toimintoon tarvitaan NFC oikeudet</string>
+    <string name="nfcUnableString">NFC ei käytettävissä</string>
+    <string name="savedString">Tallennettu</string>
+    <string name="nfcTagString">Skannaa tagi saadaksesi tiedot</string>
+    <string name="battery">Akku</string>
+    <string name="add">Lisää</string>
+    <string name="addUserTimeString">Lisää aika</string>
+    <string name="time">Aika</string>
+    <string name="username">Käyttäjänimi</string>
+    <string name="temperature">Lämpötila</string>
+    <string name="humidity">Ilmankosteus</string>
+    <string name="atmospheric_pressure">Ilmanpaine</string>
+</resources>
