@@ -15,45 +15,28 @@
         android:id="@+id/teksti"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="175dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="174dp"
         android:layout_marginEnd="175dp"
-        android:layout_marginBottom="342dp"
+        android:layout_marginBottom="48dp"
         android:text="test"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/connBtn" />
-
-    <TextView
-        android:id="@+id/teks23ti"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="175dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="175dp"
-        android:layout_marginBottom="72dp"
-        android:text="test"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/connBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tool_bar" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/connBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="161dp"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="488dp"
         android:layout_marginEnd="162dp"
-        android:layout_marginBottom="41dp"
+        android:layout_marginBottom="42dp"
         android:background="@drawable/rounded_button"
         android:text="@string/startBtnString"
         android:textColor="@color/colorPrimaryDark"
         app:layout_constraintBottom_toTopOf="@+id/teksti"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/teks23ti" />
+        app:layout_constraintTop_toBottomOf="@+id/tool_bar" />
 </androidx.constraintlayout.widget.ConstraintLayout>
