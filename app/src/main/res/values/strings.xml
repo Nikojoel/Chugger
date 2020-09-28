@@ -38,6 +38,8 @@
     <string name="scores" translatable="false">Scores</string>
     <string name="nfc" translatable="false">NFC</string>
     <string name="web" translatable="false">Web</string>
+    <string name="intro_text">Press the Scan button to find your Ruuvi tag.</string>
+    <string name="new_scan_text">Not your Ruuvi tag? Try to scan again.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

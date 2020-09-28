@@ -25,4 +25,6 @@
     <string name="temperature">Lämpötila</string>
     <string name="humidity">Ilmankosteus</string>
     <string name="atmospheric_pressure">Ilmanpaine</string>
+    <string name="intro_text">Paina Scan nappulaa löytääksesi Ruuvi tagisi</string>
+    <string name="new_scan_text">Ei sinun Ruuvi tag? Yritä skannata uudestaan.</string>
 </resources>

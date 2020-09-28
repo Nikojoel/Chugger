@@ -6,75 +6,111 @@
     android:layout_height="match_parent"
     tools:context=".fragments.BleScanFragment"
     tools:layout_editor_absoluteX="8dp"
-    tools:layout_editor_absoluteY="0dp">
+    tools:layout_editor_absoluteY="0dp"
+    android:background="#D74A4A4A">
 
-    <TextView
-        android:id="@+id/nameText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="name"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toBottomOf="@+id/signalText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/signalText" />
-
-    <TextView
-        android:id="@+id/signalText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="270dp"
-        android:layout_marginEnd="1dp"
-        android:text="RSSI"
-        android:textSize="36sp"
-        app:layout_constraintEnd_toStartOf="@+id/signalImg"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/signalImg" />
-
-    <ImageView
-        android:id="@+id/signalImg"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="237dp"
-        android:layout_marginEnd="15dp"
-        android:src="@drawable/ic_signal"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView3"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_margin="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:cardCornerRadius="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/scanBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/signalText"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/nameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|start"
+            android:layout_marginStart="16dp"
+            android:fontFamily="monospace"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/introText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center_vertical"
+            android:fontFamily="monospace"
+            android:text="@string/intro_text"
+            android:textAlignment="center"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="26sp" />
+
+        <ImageView
+            android:id="@+id/signalImg"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center|end"
+            android:layout_marginEnd="30dp" />
+
+        <ProgressBar
+            android:id="@+id/progBar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center|center_horizontal"
+            android:layout_marginBottom="14dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/scanText"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center_horizontal"
+            android:layout_marginStart="170dp"
+            android:layout_marginTop="45dp"
+            android:layout_marginEnd="171dp"
+            android:text="Scanning..."
+            android:visibility="gone" />
+
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/pairBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_button"
+        android:text="Pair"
+        android:textColor="@color/nfcText"
+        app:layout_constraintBottom_toBottomOf="@+id/scanBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView3"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/newScanText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|center_vertical"
+        android:fontFamily="monospace"
+        android:text="@string/new_scan_text"
+        android:textColor="@color/nfcText"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/pairBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView3" />
 
     <Button
         android:id="@+id/scanBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="235dp"
-        android:text="Pair"
+        android:layout_marginBottom="88dp"
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/nfcText"
+        android:text="Scan"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/progBar"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="272dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="14dp"
-        app:layout_constraintBottom_toTopOf="@+id/scanText"
-        app:layout_constraintEnd_toStartOf="@+id/signalText"
-        app:layout_constraintStart_toEndOf="@+id/nameText"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/scanText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="170dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="171dp"
-        android:text="Scanning..."
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progBar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
