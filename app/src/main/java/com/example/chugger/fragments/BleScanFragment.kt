@@ -13,10 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getSystemService
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.switchMap
+import androidx.lifecycle.*
 import com.example.chugger.R
 import kotlinx.android.synthetic.main.fragment_ble_scan.*
 import kotlinx.android.synthetic.main.fragment_ble_scan.view.*
@@ -47,7 +44,22 @@ class BleScanFragment : Fragment() {
             Log.d("DBG", it.rssi.toString())
 
             nameText.text = it.device.name.toString()
-            signalText.text = it.rssi.toString()
+
+            if(it.rssi.toString() > (-86).toString()) {
+                signalImg.setImageResource(R.drawable.ic_signal_low)
+            }
+            else if(it.rssi.toString() > (-70).toString()) {
+                signalImg.setImageResource(R.drawable.ic_signal_half)
+            }
+            else {
+                signalImg.setImageResource(R.drawable.ic_signal_full)
+            }
+
+            progBar.visibility = View.GONE
+            scanText.visibility = View.GONE
+            pairBtn.visibility = View.VISIBLE
+            newScanText.visibility = View.VISIBLE
+
         }
 
     }
@@ -56,22 +68,27 @@ class BleScanFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
         val view = inflater.inflate(R.layout.fragment_ble_scan, container, false)
         view.scanBtn.setOnClickListener {
             startScan()
+            introText.visibility = View.GONE
         }
 
         view.nameText.setOnClickListener {
             // TODO Save to prefs
         }
 
-
+        view.pairBtn.setOnClickListener {
+            // TODO Pair Ruuvi
+        }
         return view
     }
 
     private fun startScan() {
         progBar.visibility = View.VISIBLE
         scanText.visibility = View.VISIBLE
+
         callBack = BtLeScanCallback()
         bleScanner = btAdapter.bluetoothLeScanner
 
