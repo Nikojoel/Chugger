@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
     private lateinit var userAddFrag: EditUserFragment
     private lateinit var userDrinkTime: String
     private lateinit var alertFrag: AlertFragment
+    private lateinit var bleFragment: BleScanFragment
 
     private var mainMenu: Menu? = null
     private var connected = false
@@ -105,11 +106,14 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
         btManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 
         btAdapter = btManager.adapter
+
+        startBleFragment()
+
         device = btAdapter.getRemoteDevice(DEVICE_ADDRESS)
         teksti.visibility = View.GONE
         connBtn.visibility = View.GONE
 
-        startSlideFragment()
+        //startSlideFragment()
         listenBackStack()
 
         viewModel.data.observe(this) {
@@ -236,7 +240,14 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
             }
         }
     }
-
+    private fun startBleFragment() {
+        bleFragment = BleScanFragment.newInstance(btAdapter)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main_layout, bleFragment)
+            .addToBackStack(null)
+            .commit()
+    }
     private fun startSlideFragment() {
         slideFragment = ScreenSlideFragment.newInstance()
         supportFragmentManager
