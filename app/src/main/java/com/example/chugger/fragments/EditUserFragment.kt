@@ -21,8 +21,14 @@ class EditUserFragment : Fragment() {
 
     companion object {
         private lateinit var time: String
-        fun newInstance(time: String): EditUserFragment {
+        private lateinit var city: String
+        fun newInstance(time: String, city: String?, alt: String): EditUserFragment {
             this.time = time
+            if (city != null) {
+                this.city = city
+            } else {
+                this.city = alt
+            }
             return EditUserFragment()
         }
     }
@@ -36,7 +42,7 @@ class EditUserFragment : Fragment() {
         val ump = ViewModelProvider(this).get(DbUserModel::class.java)
         view.addUserButton.setOnClickListener {
             GlobalScope.launch {
-                val user = User(0, view.editUserName.text.toString(), time)
+                val user = User(0, view.editUserName.text.toString(), time, city)
                 ump.insertNew(user)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(activity, getString(R.string.savedString), Toast.LENGTH_SHORT).show()
