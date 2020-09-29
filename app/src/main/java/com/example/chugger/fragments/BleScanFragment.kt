@@ -12,12 +12,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.*
 import com.example.chugger.R
 import kotlinx.android.synthetic.main.fragment_ble_scan.*
 import kotlinx.android.synthetic.main.fragment_ble_scan.view.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class BleScanFragment : Fragment() {
 
@@ -25,6 +29,9 @@ class BleScanFragment : Fragment() {
     private lateinit var bleScanner: BluetoothLeScanner
     private lateinit var callBack: BtLeScanCallback
     private lateinit var viewModel: BtLeViewModel
+    private lateinit var macAddress: String
+    private lateinit var deviceName: String
+    private lateinit var helper: ScanFragmentHelper
 
     companion object {
         private lateinit var btAdapter: BluetoothAdapter
@@ -38,17 +45,22 @@ class BleScanFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         viewModel = BtLeViewModel()
+        helper = context as ScanFragmentHelper
 
         viewModel.data.observe(this) {
             Log.d("DBG", it.device.name.toString())
             Log.d("DBG", it.rssi.toString())
+            Log.d("DBG", it.device.toString())
 
             nameText.text = it.device.name.toString()
+            deviceName = it.device.name.toString()
+            macAddress = it.device.toString()
 
-            if(it.rssi.toString() > (-86).toString()) {
+
+            if (it.rssi.toString() > getString(R.string.rssiOffSetHigh)) {
                 signalImg.setImageResource(R.drawable.ic_signal_low)
             }
-            else if(it.rssi.toString() > (-70).toString()) {
+            else if (it.rssi.toString() > getString(R.string.rssiOffSetHigh)) {
                 signalImg.setImageResource(R.drawable.ic_signal_half)
             }
             else {
@@ -59,10 +71,9 @@ class BleScanFragment : Fragment() {
             scanText.visibility = View.GONE
             pairBtn.visibility = View.VISIBLE
             newScanText.visibility = View.VISIBLE
-
         }
-
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -75,14 +86,27 @@ class BleScanFragment : Fragment() {
             introText.visibility = View.GONE
         }
 
-        view.nameText.setOnClickListener {
-            // TODO Save to prefs
-        }
-
         view.pairBtn.setOnClickListener {
-            // TODO Pair Ruuvi
+            saveToPrefs()
         }
         return view
+    }
+
+    private fun saveToPrefs() {
+        try {
+            GlobalScope.launch(Dispatchers.IO) {
+                val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@launch
+                with (sharedPref.edit()) {
+                    putString(getString(R.string.macKey), macAddress)
+                    apply()
+                }
+            }
+        } catch (e: Exception) {
+            Toast.makeText(activity, getString(R.string.pairExceptionText), Toast.LENGTH_SHORT).show()
+        }
+        Toast.makeText(activity, getString(R.string.pairToastText, deviceName), Toast.LENGTH_SHORT).show()
+        fragmentManager?.popBackStackImmediate()
+        helper.startSlide()
     }
 
     private fun startScan() {
@@ -105,7 +129,6 @@ class BleScanFragment : Fragment() {
     }
 
     private inner class BtLeScanCallback : ScanCallback() {
-
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             addScanResult(result)
             Log.d("DBG","Added result $result")
@@ -119,6 +142,10 @@ class BleScanFragment : Fragment() {
             bleScanner.stopScan(callBack)
             viewModel.changeValue(result)
         }
+    }
+
+    interface ScanFragmentHelper {
+        fun startSlide()
     }
 }
 
