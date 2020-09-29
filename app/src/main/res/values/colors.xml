@@ -4,4 +4,10 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="nfcText">#FFFFFF</color>
+    <color name="basicText">#D74A4A4A</color>
+    <color name="nfcBack">#000000</color>
+
+    <color name="DarkColorPrimary">#2A2D38</color>
+    <color name="DarkColorPrimaryDark">#1A1D20</color>
+    <color name="DarkColorAccent">#FFFFFF</color>
 </resources>

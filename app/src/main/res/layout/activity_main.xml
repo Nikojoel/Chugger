@@ -5,7 +5,8 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.MainActivity">
+    tools:context=".activity.MainActivity"
+    android:background="@drawable/background">
 
     <include
         android:id="@+id/tool_bar"
@@ -20,6 +21,7 @@
         android:layout_marginBottom="48dp"
         android:text="test"
         android:textSize="36sp"
+        android:textColor="@color/nfcText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -34,9 +36,10 @@
         android:layout_marginBottom="42dp"
         android:background="@drawable/rounded_button"
         android:text="@string/startBtnString"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/nfcText"
         app:layout_constraintBottom_toTopOf="@+id/teksti"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tool_bar" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

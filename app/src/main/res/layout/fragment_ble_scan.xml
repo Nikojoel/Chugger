@@ -7,7 +7,7 @@
     tools:context=".fragments.BleScanFragment"
     tools:layout_editor_absoluteX="8dp"
     tools:layout_editor_absoluteY="0dp"
-    android:background="#D74A4A4A">
+    >
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
@@ -56,6 +56,7 @@
             android:layout_height="100dp"
             android:layout_gravity="center|center_horizontal"
             android:layout_marginBottom="14dp"
+            android:background="@drawable/progress"
             android:visibility="gone" />
 
         <TextView
