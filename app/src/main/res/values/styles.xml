@@ -10,7 +10,7 @@
     <style name="BackGroundImageView">
         <item name="android:alpha">1</item>
         <item name="android:scaleType">fitXY</item>
-        <item name="android:src">@drawable/background</item>
+        <item name="android:src">@drawable/beerbackground</item>
     </style>
 
     <style name="NewAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
