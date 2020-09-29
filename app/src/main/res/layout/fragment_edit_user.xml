@@ -33,15 +33,18 @@
 
                 <TextView
                     android:id="@+id/textView4"
+                    android:fontFamily="monospace"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="84dp"
+                    android:textColor="@color/basicText"
                     android:text="@string/addUserTimeString"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 <EditText
                     android:id="@+id/editUserName"
+                    android:fontFamily="monospace"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -53,7 +56,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:background="@drawable/rounded_button_black"
                     android:elevation="2dp"
+                    android:textColor="@color/basicText"
+                    android:layout_marginTop="10dp"
                     android:text="@string/add"
                     app:icon="@drawable/ic_nfc" />
             </LinearLayout>

@@ -13,4 +13,12 @@
         <item name="android:src">@drawable/background</item>
     </style>
 
+    <style name="NewAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/DarkColorPrimary</item>
+        <item name="colorPrimaryDark">@color/DarkColorPrimaryDark</item>
+        <item name="colorAccent">@color/DarkColorAccent</item>
+        <item name="android:textColorSecondary">@color/nfcText</item>
+    </style>
+
 </resources>
