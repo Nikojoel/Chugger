@@ -27,4 +27,6 @@
     <string name="atmospheric_pressure">Ilmanpaine</string>
     <string name="intro_text">Paina Scan nappulaa löytääksesi Ruuvi tagisi</string>
     <string name="new_scan_text">Ei sinun Ruuvi tag? Yritä skannata uudestaan.</string>
+    <string name="pairToastText">Tallennettu %1$s</string>
+    <string name="pairExceptionText">Ongelma tallentaessa</string>
 </resources>

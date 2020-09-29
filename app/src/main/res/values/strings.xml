@@ -40,6 +40,9 @@
     <string name="web" translatable="false">Web</string>
     <string name="intro_text">Press the Scan button to find your Ruuvi tag.</string>
     <string name="new_scan_text">Not your Ruuvi tag? Try to scan again.</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="rssiOffSetHigh" translatable="false">-86</string>
+    <string name="rssiOffSetLow" translatable="false">-86</string>
+    <string name="macKey" translatable="false">RuuviMac</string>
+    <string name="pairToastText">Paired device %1$s</string>
+    <string name="pairExceptionText">Problem occurred while pairing</string>
 </resources>

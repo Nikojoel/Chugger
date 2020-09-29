@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.nfc.NfcAdapter
@@ -30,9 +31,9 @@ import com.example.chugger.fragments.*
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
-private const val DEVICE_ADDRESS = "D3:E0:2A:CB:0C:FE"
 private const val LOCATION_REQUEST = 200
-class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, AlertFragment.AlertHelper {
+
+class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, AlertFragment.AlertHelper, BleScanFragment.ScanFragmentHelper {
 
     companion object {
         private const val xOffSet = 0.050
@@ -72,7 +73,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
 
     private lateinit var btAdapter: BluetoothAdapter
     private lateinit var viewModel: BtViewModel
-    private lateinit var device: BluetoothDevice
     private lateinit var btManager: BluetoothManager
     private lateinit var gatt: BluetoothGatt
     private lateinit var slideFragment: ScreenSlideFragment
@@ -81,6 +81,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
     private lateinit var userDrinkTime: String
     private lateinit var alertFrag: AlertFragment
     private lateinit var bleFragment: BleScanFragment
+    private lateinit var device: BluetoothDevice
+    private lateinit var sharedPref: SharedPreferences
 
     private var mainMenu: Menu? = null
     private var connected = false
@@ -88,6 +90,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
     private var firstTime = true
     private var negatives = false
     private var toast = true
+    private var deviceAddress: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,13 +110,17 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
 
         btAdapter = btManager.adapter
 
-        startBleFragment()
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        deviceAddress = sharedPref.getString(getString(R.string.macKey), 0.toString())
 
-        device = btAdapter.getRemoteDevice(DEVICE_ADDRESS)
+
+        if (deviceAddress == 0.toString()) {
+            startBleFragment()
+            connBtn.visibility = View.GONE
+        }
+
         teksti.visibility = View.GONE
-        connBtn.visibility = View.GONE
 
-        //startSlideFragment()
         listenBackStack()
 
         viewModel.data.observe(this) {
@@ -208,6 +215,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
         when (btAdapter.isEnabled) {
             false -> askBtPermission()
             true -> {
+                device = btAdapter.getRemoteDevice(deviceAddress)
                 showToast(getString(R.string.connectingToastString, device.name), Toast.LENGTH_SHORT)
                 gatt = device.connectGatt(
                     this,
@@ -228,6 +236,9 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
 
     private fun listenBackStack() {
         supportFragmentManager.addOnBackStackChangedListener {
+            if (supportFragmentManager.backStackEntryCount == 0 && deviceAddress == 0.toString()) {
+                deviceAddress = sharedPref.getString(getString(R.string.macKey), 0.toString())
+            }
             Log.d("DBG", "frag manager count: ${supportFragmentManager.backStackEntryCount}")
             if (supportFragmentManager.backStackEntryCount == 0) {
                 connBtn.visibility = View.VISIBLE
@@ -406,5 +417,9 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
 
     override fun startDbFrag() {
         startAddUserFragment()
+    }
+
+    override fun startSlide() {
+        startSlideFragment()
     }
 }
