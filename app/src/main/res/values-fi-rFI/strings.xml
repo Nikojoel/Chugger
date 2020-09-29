@@ -29,4 +29,5 @@
     <string name="new_scan_text">Ei sinun Ruuvi tag? Yritä skannata uudestaan.</string>
     <string name="pairToastText">Tallennettu %1$s</string>
     <string name="pairExceptionText">Ongelma tallentaessa</string>
+    <string name="cityText">Ei saatavilla</string>
 </resources>

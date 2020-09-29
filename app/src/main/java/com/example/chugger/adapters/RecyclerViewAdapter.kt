@@ -18,6 +18,7 @@ class RecyclerViewAdapter(private val users: List<User>) : RecyclerView.Adapter<
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.userName.text = users[position].userName
         holder.itemView.userTime.text = "${users[position].time} seconds"
+        holder.itemView.cityText.text = users[position].city
     }
 }
 

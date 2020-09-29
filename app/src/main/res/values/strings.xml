@@ -45,4 +45,6 @@
     <string name="macKey" translatable="false">RuuviMac</string>
     <string name="pairToastText">Paired device %1$s</string>
     <string name="pairExceptionText">Problem occurred while pairing</string>
+    <string name="cityText">Not available</string>
+    <string name="city" translatable="false">City</string>
 </resources>
