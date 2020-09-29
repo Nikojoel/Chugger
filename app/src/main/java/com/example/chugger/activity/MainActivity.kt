@@ -140,6 +140,11 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        enableMenu(true)
+    }
+
     private fun startRunning(data: String) {
         Timber.d(data)
         if (toast) {
@@ -230,7 +235,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         mainMenu = menu
         menuInflater.inflate(R.menu.main_menu, menu)
-        enableMenu(false)
         return true
     }
 
@@ -241,10 +245,11 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
             }
             Log.d("DBG", "frag manager count: ${supportFragmentManager.backStackEntryCount}")
             if (supportFragmentManager.backStackEntryCount == 0) {
+                Log.d("DBG", "boop")
                 connBtn.visibility = View.VISIBLE
                 connBtn.isEnabled = true
                 enableMenu(true)
-            } else if (supportFragmentManager.backStackEntryCount > 0 && mainMenu != null) {
+            } else if (supportFragmentManager.backStackEntryCount > 0) {
                 connBtn.visibility = View.GONE
                 connBtn.isEnabled = false
                 enableMenu(false)
