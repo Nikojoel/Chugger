@@ -58,6 +58,9 @@ class StopWatchFragment() : Fragment() {
             override fun run() {
                 view.milliSeconds.text = stopWatch.elapsedMill()
                 view.seconds.text = stopWatch.elapsedSec()
+                if (stopWatch.elapsedSec() == null) {
+                    activity?.onBackPressed()
+                }
                 if (progBar != null) {
                     progBar.progress = progBar.progress - 1
                 }
