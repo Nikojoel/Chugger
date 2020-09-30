@@ -7,7 +7,7 @@ import com.example.chugger.fragments.SwipeFragment
 
 class ScreenSlideAdapter(fragment: Fragment): FragmentStateAdapter(fragment) {
 
-    override fun getItemCount(): Int = 3
+    override fun getItemCount(): Int = 4
 
     override fun createFragment(position: Int): Fragment {
         Log.d("DBG", "create fragment position: ${position}")

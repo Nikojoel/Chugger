@@ -10,6 +10,7 @@ import com.example.chugger.R
 import com.example.chugger.models.FragmentData
 import com.example.chugger.models.SlideHelper
 import kotlinx.android.synthetic.main.fragment_swipe.view.*
+import timber.log.Timber
 
 class SwipeFragment : Fragment() {
     companion object {
@@ -19,6 +20,7 @@ class SwipeFragment : Fragment() {
                 0 -> this.data = SlideHelper.slide0
                 1 -> this.data = SlideHelper.slide1
                 2 -> this.data = SlideHelper.slide2
+                3 -> this.data = SlideHelper.slide3
             }
             return SwipeFragment()
         }
