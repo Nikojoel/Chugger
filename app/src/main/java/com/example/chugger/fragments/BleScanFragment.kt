@@ -58,13 +58,13 @@ class BleScanFragment : Fragment() {
 
 
             if (it.rssi.toString() > getString(R.string.rssiOffSetHigh)) {
-                signalImg.setImageResource(R.drawable.ic_signal_low)
+                signalImg.setImageResource(R.drawable.ic_signal3)
             }
-            else if (it.rssi.toString() > getString(R.string.rssiOffSetHigh)) {
-                signalImg.setImageResource(R.drawable.ic_signal_half)
+            else if (it.rssi.toString() > getString(R.string.rssiOffSetLow)) {
+                signalImg.setImageResource(R.drawable.ic_signal2)
             }
             else {
-                signalImg.setImageResource(R.drawable.ic_signal_full)
+                signalImg.setImageResource(R.drawable.ic_signal1)
             }
 
             progBar.visibility = View.GONE

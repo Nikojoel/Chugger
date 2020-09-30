@@ -5,26 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.BleScanFragment"
-    tools:layout_editor_absoluteX="8dp"
-    tools:layout_editor_absoluteY="0dp">
+    >
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="246dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="165dp"
         android:layout_marginStart="7dp"
         android:layout_marginEnd="7dp"
-        android:layout_marginBottom="169dp"
-        app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toTopOf="@+id/scanBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/background"/>
+        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@color/cardBack2"
+        >
 
         <TextView
             android:id="@+id/nameText"
@@ -33,7 +28,8 @@
             android:layout_gravity="center|start"
             android:layout_marginStart="16dp"
             android:fontFamily="monospace"
-            android:textSize="28sp" />
+            android:textSize="28sp"
+            android:textColor="@color/nfcText"/>
 
         <TextView
             android:id="@+id/introText"
@@ -45,6 +41,7 @@
             android:paddingEnd="5dp"
             android:text="@string/intro_text"
             android:textAlignment="center"
+            android:textColor="@color/nfcText"
             android:textSize="20sp" />
 
         <ImageView
@@ -52,7 +49,9 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center|end"
-            android:layout_marginEnd="30dp" />
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="30dp"
+            />
 
         <ProgressBar
             android:id="@+id/progBar"
@@ -71,8 +70,10 @@
             android:layout_marginStart="170dp"
             android:layout_marginTop="45dp"
             android:layout_marginEnd="171dp"
+            android:fontFamily="monospace"
             android:text="Scanning..."
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:textColor="@color/nfcText"/>
 
     </androidx.cardview.widget.CardView>
 
