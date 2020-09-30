@@ -1,6 +1,7 @@
 package com.example.chugger.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -11,6 +12,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
+import android.location.Geocoder
 import android.net.Uri
 import android.nfc.NfcAdapter
 import android.os.Bundle
@@ -19,8 +22,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.chugger.BuildConfig
@@ -28,14 +34,21 @@ import com.example.chugger.R
 import com.example.chugger.bluetooth.BtViewModel
 import com.example.chugger.bluetooth.GattCallBack
 import com.example.chugger.fragments.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
+import java.util.*
 
 private const val LOCATION_REQUEST = 200
 
-class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, AlertFragment.AlertHelper, BleScanFragment.ScanFragmentHelper {
+class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
+    AlertFragment.AlertHelper, BleScanFragment.ScanFragmentHelper {
+
 
     companion object {
+        lateinit var instance: MainActivity private set
+
         private const val xOffSet = 0.050
         private const val zOffSet = 1.050
         private const val zOffSetMax = 1.0
@@ -71,6 +84,12 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
         }
     }
 
+    object Strings {
+        fun get(@StringRes stringRes: Int, vararg formatArgs: Any = emptyArray()): String {
+            return instance.getString(stringRes, *formatArgs)
+        }
+    }
+
     private lateinit var btAdapter: BluetoothAdapter
     private lateinit var viewModel: BtViewModel
     private lateinit var btManager: BluetoothManager
@@ -83,6 +102,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
     private lateinit var bleFragment: BleScanFragment
     private lateinit var device: BluetoothDevice
     private lateinit var sharedPref: SharedPreferences
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var geoCoder: Geocoder
 
     private var mainMenu: Menu? = null
     private var connected = false
@@ -91,11 +112,13 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
     private var negatives = false
     private var toast = true
     private var deviceAddress: String? = ""
+    private var city: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        instance = this
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setTitle(R.string.app_name)
 
@@ -120,6 +143,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
         }
 
         teksti.visibility = View.GONE
+        teksti2.visibility = View.GONE
 
         listenBackStack()
 
@@ -145,12 +169,25 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
         enableMenu(true)
     }
 
+    @SuppressLint("MissingPermission")
+    private fun getCity() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        geoCoder = Geocoder(this, Locale.getDefault())
+        fusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
+            if (task.isSuccessful && task.result != null) {
+                val geocoded = geoCoder.getFromLocation(task.result!!.latitude, task.result!!.longitude, 1)
+                city = geocoded[0].locality
+            }
+        }
+    }
+
     private fun startRunning(data: String) {
         Timber.d(data)
         if (toast) {
             teksti.visibility = View.INVISIBLE
             showToast(getString(R.string.connectToastString, device.name), Toast.LENGTH_SHORT)
             toast = false
+            teksti2.visibility = View.VISIBLE
         }
         val accData = data.split(",")
         val accX = accData[0].toFloat() / 1000
@@ -162,6 +199,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
             firstTime = false
             startStopWatchFragment()
             teksti.visibility = View.VISIBLE
+            connBtn.visibility = View.INVISIBLE
+            teksti2.visibility = View.GONE
         }
         val xAngle = calculateAngle(accX)
         val zAngle = calculateAngle(accZ)
@@ -172,7 +211,10 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
         if (xDeg > 15) start = true
         if (zDeg < 5) negatives = true
         teksti.text =
-            if (negatives) getString(R.string.degreesTextString, 90 + zDeg.toInt()) else getString(R.string.degreesTextString, xDeg.toInt())
+            if (negatives) getString(
+                R.string.degreesTextString,
+                90 + zDeg.toInt()
+            ) else getString(R.string.degreesTextString, xDeg.toInt())
 
         // End timer when sensor is placed back on the table
         if (accX < xOffSet && accZ > zOffSetMax && start) {
@@ -214,6 +256,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
         gatt.close()
         setBooleans()
         teksti.visibility = View.GONE
+        connBtn.visibility = View.VISIBLE
+        teksti2.visibility = View.GONE
     }
 
     private fun connectDevice() {
@@ -221,7 +265,10 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
             false -> askBtPermission()
             true -> {
                 device = btAdapter.getRemoteDevice(deviceAddress)
-                showToast(getString(R.string.connectingToastString, device.name), Toast.LENGTH_SHORT)
+                showToast(
+                    getString(R.string.connectingToastString, device.name),
+                    Toast.LENGTH_SHORT
+                )
                 gatt = device.connectGatt(
                     this,
                     false,
@@ -245,7 +292,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
             }
             Log.d("DBG", "frag manager count: ${supportFragmentManager.backStackEntryCount}")
             if (supportFragmentManager.backStackEntryCount == 0) {
-                Log.d("DBG", "boop")
                 connBtn.visibility = View.VISIBLE
                 connBtn.isEnabled = true
                 enableMenu(true)
@@ -256,6 +302,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
             }
         }
     }
+
     private fun startBleFragment() {
         bleFragment = BleScanFragment.newInstance(btAdapter)
         supportFragmentManager
@@ -264,6 +311,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
             .addToBackStack(null)
             .commit()
     }
+
     private fun startSlideFragment() {
         slideFragment = ScreenSlideFragment.newInstance()
         supportFragmentManager
@@ -274,7 +322,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
     }
 
     private fun startAddUserFragment() {
-        userAddFrag = EditUserFragment.newInstance(userDrinkTime)
+        userAddFrag =
+            EditUserFragment.newInstance(userDrinkTime, city, getString(R.string.cityText))
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.main_layout, userAddFrag)
@@ -350,6 +399,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
             return false
         }
         connBtn.isEnabled = true
+        getCity()
         return true
     }
 
@@ -410,7 +460,10 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper, Ale
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 200) {
             when (grantResults[0]) {
-                PackageManager.PERMISSION_GRANTED -> connBtn.isEnabled = true
+                PackageManager.PERMISSION_GRANTED -> {
+                    connBtn.isEnabled = true
+                    getCity()
+                }
                 PackageManager.PERMISSION_DENIED -> {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                         showAlert(permissions)

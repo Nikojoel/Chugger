@@ -29,4 +29,14 @@
     <string name="new_scan_text">Ei sinun Ruuvi tag? Yritä skannata uudestaan.</string>
     <string name="pairToastText">Tallennettu %1$s</string>
     <string name="pairExceptionText">Ongelma tallentaessa</string>
+    <string name="cityText">Ei saatavilla</string>
+    <string name="titleData1">Eka</string>
+    <string name="titleData2">Toka</string>
+    <string name="titleData3">Kolmas</string>
+    <string name="descData1">Eka</string>
+    <string name="descData2">Toka</string>
+    <string name="descData3">Kolmas</string>
+    <string name="titleData0">Nolla</string>
+    <string name="descData0">Nolla</string>
+    <string name="getStartedBtnString">Valmis</string>
 </resources>

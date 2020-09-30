@@ -22,11 +22,18 @@
 
     <TextView
         android:id="@+id/userTime"
-        android:layout_width="wrap_content"
+        android:layout_width="106dp"
         android:layout_height="wrap_content"
         android:textColor="@color/nfcText"
         android:textAlignment="textEnd"
         android:text="@string/time"
         android:textSize="24sp"
         android:layout_weight="1"/>
+        android:textSize="24sp" />
+    <TextView
+        android:id="@+id/cityText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/city"
+        android:textSize="24sp" />
 </LinearLayout>

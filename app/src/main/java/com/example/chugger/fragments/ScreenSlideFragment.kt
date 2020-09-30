@@ -36,10 +36,8 @@ class ScreenSlideFragment : Fragment() {
         pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 when (position) {
-                    1 -> view.skipBtn.visibility = View.GONE
-                    2 -> {
-                        view.skipBtn.visibility = View.VISIBLE
-                        view.skipBtn.text = getString(R.string.startBtnString)
+                    3 -> {
+                        view.skipBtn.text = getString(R.string.getStartedBtnString)
                     }
                 }
                 super.onPageSelected(position)

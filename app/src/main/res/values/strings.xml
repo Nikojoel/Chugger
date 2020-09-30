@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Chugger</string>
     <string name="startBtnString">Start</string>
+    <string name="getStartedBtnString">Ready</string>
     <string name="connectToastString">"Connected to %1$s"</string>
     <string name="degreesTextString">%1$d degrees</string>
     <string name="connectingToastString">Connecting to %1$s…</string>
@@ -45,4 +46,33 @@
     <string name="macKey" translatable="false">RuuviMac</string>
     <string name="pairToastText">Paired device %1$s</string>
     <string name="pairExceptionText">Problem occurred while pairing</string>
+    <string name="cityText">Not available</string>
+    <string name="city" translatable="false">City</string>
+
+    <string name="titleData0">What is this?</string>
+    <string name="titleData1">Flashing the correct Ruuvi firmware</string>
+    <string name="titleData2">Connecting to Web Bluetooth</string>
+    <string name="titleData3">Drinking instructions</string>
+
+    <string name="descData0">
+        Chugger is the perfect app to host a chugging competition with friends and family.
+        Use it to save your drinking time, place and see who is the fastest Chugger. Developed by
+        Niko Holopainen &amp; Jalmari Espo.
+    </string>
+    <string name="descData1">
+        The application is designed to use RuuviTag with the Espruino v1.93 firmware.
+        For the firmware instructions, please refer to the official Ruuvi documentation at
+        lab.ruuvi.com/dfu and choose the option 3 (Espruino JavaScript Interpreter).
+    </string>
+    <string name="descData2">
+        To install the correct JavaScript code, press the wrench icon
+        found on the toolbar to open up the Espruino Web IDE. Code can be found from XXX.
+        Insert the code to the IDE and send it to Espruino by pressing the RAM button.
+        Remember to disconnect the Ruuvi from the IDE after the code is sent.
+    </string>
+    <string name="descData3">
+        Before you start drinking, place the RuuviTag on bottom of a cooler sleeve
+        and place your can on top of it. Make sure the tag notch is facing towards you. Press the start button only once
+        and wait until you see a text that tells you the sensor is ready.
+    </string>
 </resources>
