@@ -25,14 +25,14 @@ class Stopwatch {
             return elapsed
         }
 
-    fun elapsedSec(): String {
+    fun elapsedSec(): String? {
         var elapsed = ""
         if (running) {
             val time = "${((System.currentTimeMillis() - startTime) / 1000) % 60}"
             if (time.length < 2) elapsed = "0$time:" else elapsed = "$time:"
 
             if (time.contains("59")) {
-                stop()
+                return null
             }
         }
         return elapsed
