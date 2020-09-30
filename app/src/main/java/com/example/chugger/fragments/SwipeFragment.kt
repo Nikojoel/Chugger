@@ -34,7 +34,7 @@ class SwipeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_swipe, container, false)
         view.title.text = data.title
         view.desc.text = data.desc
-        //view.image.setImageResource(data.imgResId)
+        view.image.setImageResource(data.imgResId)
 
         return view
     }

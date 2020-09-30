@@ -27,6 +27,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.chugger.BuildConfig
@@ -44,7 +45,6 @@ private const val LOCATION_REQUEST = 200
 
 class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
     AlertFragment.AlertHelper, BleScanFragment.ScanFragmentHelper {
-
 
     companion object {
         lateinit var instance: MainActivity private set

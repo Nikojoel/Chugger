@@ -50,14 +50,14 @@
     <string name="city" translatable="false">City</string>
 
     <string name="titleData0">What is this?</string>
-    <string name="titleData1">Flashing the correct Ruuvi firmware</string>
+    <string name="titleData1">Flashing the correct firmware</string>
     <string name="titleData2">Connecting to Web Bluetooth</string>
     <string name="titleData3">Drinking instructions</string>
 
     <string name="descData0">
         Chugger is the perfect app to host a chugging competition with friends and family.
-        Use it to save your drinking time, place and see who is the fastest Chugger. Developed by
-        Niko Holopainen &amp; Jalmari Espo.
+        Use it to save your drinking time, location and see who is the fastest Chugger. You can use any
+        beverage you like but we recommend using beer. Developed by Niko Holopainen &amp; Jalmari Espo.
     </string>
     <string name="descData1">
         The application is designed to use RuuviTag with the Espruino v1.93 firmware.
@@ -73,6 +73,10 @@
     <string name="descData3">
         Before you start drinking, place the RuuviTag on bottom of a cooler sleeve
         and place your can on top of it. Make sure the tag notch is facing towards you. Press the start button only once
-        and wait until you see a text that tells you the sensor is ready.
+        and wait until you see a text that tells you the sensor is ready. Place the can back on a flat surface to stop
+        the timer and get your time.
     </string>
+    <string name="scanningText">Scanning…</string>
+    <string name="scanBtnText">Scan</string>
+    <string name="pairText">Pair</string>
 </resources>

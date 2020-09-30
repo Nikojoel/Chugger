@@ -7,17 +7,17 @@ object SlideHelper {
     val slide0 = FragmentData(
         MainActivity.Strings.get(R.string.titleData0),
         MainActivity.Strings.get(R.string.descData0),
-        0)
+        2131230907)
 
     val slide1 = FragmentData(
         MainActivity.Strings.get(R.string.titleData1),
         MainActivity.Strings.get(R.string.descData1),
-        0)
+        2131230908)
 
     val slide2 = FragmentData(
         MainActivity.Strings.get(R.string.titleData2),
         MainActivity.Strings.get(R.string.descData2),
-        0)
+        2131230909)
 
     val slide3 = FragmentData(
         MainActivity.Strings.get(R.string.titleData3),

@@ -15,23 +15,22 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp">
+            android:layout_height="450dp">
 
             <ImageView
                 android:id="@+id/image"
-                android:src="@drawable/background"
                 android:scaleType="centerCrop"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="250dp" />
 
             <TextView
                 android:id="@+id/title"
                 android:textColor="#262626"
                 android:layout_below="@id/image"
                 android:layout_marginTop="10dp"
-                android:layout_marginLeft="16dp"
-                android:text="Title"
+                android:layout_marginStart="16dp"
                 android:textSize="16sp"
+                android:fontFamily="monospace"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -41,10 +40,10 @@
                 android:layout_marginTop="3dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:maxLines="3"
+                android:maxLines="10"
                 android:drawablePadding="10dp"
                 android:ellipsize="end"
-                android:text="Description"
+                android:fontFamily="monospace"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

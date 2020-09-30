@@ -39,4 +39,7 @@
     <string name="titleData0">Nolla</string>
     <string name="descData0">Nolla</string>
     <string name="getStartedBtnString">Valmis</string>
+    <string name="scanningText">Etsitään...</string>
+    <string name="scanBtnText">Etsi</string>
+    <string name="pairText">Parita</string>
 </resources>
