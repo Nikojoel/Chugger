@@ -12,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.net.Uri
 import android.nfc.NfcAdapter
@@ -21,8 +22,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.chugger.BuildConfig
@@ -41,7 +45,10 @@ private const val LOCATION_REQUEST = 200
 class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
     AlertFragment.AlertHelper, BleScanFragment.ScanFragmentHelper {
 
+
     companion object {
+        lateinit var instance: MainActivity private set
+
         private const val xOffSet = 0.050
         private const val zOffSet = 1.050
         private const val zOffSetMax = 1.0
@@ -77,6 +84,12 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         }
     }
 
+    object Strings {
+        fun get(@StringRes stringRes: Int, vararg formatArgs: Any = emptyArray()): String {
+            return instance.getString(stringRes, *formatArgs)
+        }
+    }
+
     private lateinit var btAdapter: BluetoothAdapter
     private lateinit var viewModel: BtViewModel
     private lateinit var btManager: BluetoothManager
@@ -105,6 +118,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        instance = this
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setTitle(R.string.app_name)
 
@@ -129,6 +143,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         }
 
         teksti.visibility = View.GONE
+        teksti2.visibility = View.GONE
 
         listenBackStack()
 
@@ -172,6 +187,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             teksti.visibility = View.INVISIBLE
             showToast(getString(R.string.connectToastString, device.name), Toast.LENGTH_SHORT)
             toast = false
+            teksti2.visibility = View.VISIBLE
         }
         val accData = data.split(",")
         val accX = accData[0].toFloat() / 1000
@@ -183,6 +199,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             firstTime = false
             startStopWatchFragment()
             teksti.visibility = View.VISIBLE
+            connBtn.visibility = View.INVISIBLE
+            teksti2.visibility = View.GONE
         }
         val xAngle = calculateAngle(accX)
         val zAngle = calculateAngle(accZ)
@@ -238,6 +256,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         gatt.close()
         setBooleans()
         teksti.visibility = View.GONE
+        connBtn.visibility = View.VISIBLE
+        teksti2.visibility = View.GONE
     }
 
     private fun connectDevice() {

@@ -26,6 +26,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <TextView
+        android:id="@+id/teksti2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="152dp"
+        android:layout_marginTop="375dp"
+        android:layout_marginEnd="161dp"
+        android:layout_marginBottom="64dp"
+        android:text="Ready"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/connBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tool_bar" />
+
     <Button
         android:id="@+id/connBtn"
         android:layout_width="wrap_content"

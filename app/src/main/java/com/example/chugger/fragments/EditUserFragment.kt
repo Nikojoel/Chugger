@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class EditUserFragment : Fragment() {
-
     companion object {
         private lateinit var time: String
         private lateinit var city: String
