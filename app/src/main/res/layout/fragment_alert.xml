@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -10,66 +11,78 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="20dp"
-        android:layout_margin="8dp">
+        android:layout_margin="10dp"
+        android:backgroundTint="@color/cardBack2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp">
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/image"
-                android:src="@drawable/background"
-                android:scaleType="centerCrop"
-                android:layout_width="match_parent"
-                android:layout_height="200dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            >
 
             <TextView
                 android:id="@+id/title"
-                android:textColor="#262626"
-                android:layout_below="@id/image"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="16dp"
                 android:text="@string/newTimeString"
-                android:textSize="16sp"
+                android:fontFamily="monospace"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/nfcText"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                 />
 
             <TextView
                 android:id="@+id/desc"
-                android:layout_below="@id/title"
-                android:layout_marginTop="3dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:maxLines="3"
-                android:drawablePadding="10dp"
-                android:ellipsize="end"
                 android:text="@string/drinkTimeString"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
-                android:id="@+id/saveBtn"
-                android:layout_width="wrap_content"
+                android:fontFamily="monospace"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_button"
-                android:text="@string/saveTimeString"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_marginTop="255dp"
-                android:layout_marginLeft="100dp"
-                />
+                android:layout_gravity="center"
+                android:textColorHint="@color/nfcText"
+                android:textColor="@color/nfcText"
+                android:textAlignment="center"
+                 />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                >
+
             <Button
                 android:id="@+id/cancelBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_button"
                 android:text="@string/closeAlertString"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_marginTop="255dp"
+                android:textColor="@color/nfcText"
+                android:layout_marginStart="10dp"
+                />
+            <Button
+                android:id="@+id/saveBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_button"
+                android:text="@string/saveTimeString"
+                android:textColor="@color/nfcText"
+                android:layout_marginStart="160dp"
                 />
 
+            </LinearLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
