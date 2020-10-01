@@ -9,10 +9,12 @@ import android.nfc.NfcManager
 import android.nfc.Tag
 import android.nfc.tech.IsoDep
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.chugger.R
 import kotlinx.android.synthetic.main.activity_nfc.*
+import kotlinx.android.synthetic.main.tool_bar.*
 import timber.log.Timber
 
 class NfcActivity: AppCompatActivity() {
@@ -26,7 +28,8 @@ class NfcActivity: AppCompatActivity() {
         setContentView(R.layout.activity_nfc)
 
         setSupportActionBar(findViewById(R.id.tool_bar))
-        supportActionBar?.setTitle(R.string.app_name)
+        toolBarText.visibility = View.GONE
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 

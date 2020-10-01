@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center|top"
     android:layout_marginTop="10dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/cardBack2">
 
     <TextView
         android:id="@+id/userName"
