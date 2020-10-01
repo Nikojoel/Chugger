@@ -42,4 +42,5 @@
     <string name="scanningText">Etsitään...</string>
     <string name="scanBtnText">Etsi</string>
     <string name="pairText">Parita</string>
+    <string name="scoreTitle">Nopeimmat Juojat</string>
 </resources>

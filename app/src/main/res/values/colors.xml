@@ -12,4 +12,6 @@
     <color name="DarkColorAccent">#FFFFFF</color>
     <color name="cardBack">#26FFFFFF</color>
     <color name="cardBack2">#4D000000</color>
+    <color name="progBar1">#000000</color>
+    <color name="progBar2">#FFFFFF</color>
 </resources>

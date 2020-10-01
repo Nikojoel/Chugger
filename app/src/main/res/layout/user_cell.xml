@@ -1,39 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:layout_gravity="center|top"
-    android:layout_weight="1"
-    android:layout_marginStart="10dp"
-    android:layout_marginEnd="10dp">
+    android:layout_marginTop="10dp"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/username"
-        android:textAlignment="textStart"
         android:textColor="@color/nfcText"
-        android:textSize="24sp"
+        android:fontFamily="monospace"
+        android:textSize="22sp"
+        android:layout_gravity="center"
+        android:textAlignment="center"
         android:layout_weight="1"
+        app:drawableStartCompat="@drawable/ic_user"
         />
 
     <TextView
         android:id="@+id/userTime"
-        android:layout_width="106dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/nfcText"
-        android:textAlignment="textEnd"
+        android:fontFamily="monospace"
+        android:textAlignment="center"
         android:text="@string/time"
-        android:textSize="24sp"
-        android:layout_weight="1"/>
+        android:textSize="20sp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        app:drawableStartCompat="@drawable/ic_time"/>
 
     <TextView
         android:id="@+id/cityText"
         android:layout_width="wrap_content"
+        android:textAlignment="center"
+        android:textColor="@color/nfcText"
         android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:layout_gravity="center"
         android:text="@string/city"
-        android:textSize="24sp" />
+        android:textSize="20sp"
+        app:drawableStartCompat="@drawable/ic_location" />
+
 </LinearLayout>

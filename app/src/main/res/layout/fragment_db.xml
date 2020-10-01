@@ -5,13 +5,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+    <TextView
+        android:id="@+id/fastestChuggers"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:fontFamily="monospace"
+        android:gravity="center|center_horizontal"
+        android:text="@string/scoreTitle"
+        android:textColor="@color/nfcText"
+        android:layout_marginTop="50dp"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/recView" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fastestChuggers"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
