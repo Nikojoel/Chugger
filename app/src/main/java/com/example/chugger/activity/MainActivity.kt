@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
 
         private const val xOffSet = 0.050
         private const val zOffSet = 1.050
-        private const val zOffSetMax = 1.0
+        private const val zOffSetMax = 0.950
 
         private const val gravity = 9.81
         private const val zMax = -1.0F
@@ -120,7 +120,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
 
         instance = this
         setSupportActionBar(findViewById(R.id.tool_bar))
-        supportActionBar?.setTitle(R.string.app_name)
 
         hasPermissions()
         askBtPermission()
@@ -128,6 +127,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+
         viewModel = ViewModelProvider(this).get(BtViewModel::class.java)
         btManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 
@@ -425,7 +425,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
     private fun showAlert(permissions: Array<String>) {
         val builder = AlertDialog.Builder(this)
         builder.apply {
-            setMessage(getString(R.string.locationString, LOCATION_REQUEST))
+            setMessage(getString(R.string.locationString))
             setTitle(getString(R.string.permissionNeededString))
             setPositiveButton(getString(R.string.turnOnString)) { _, _ ->
                 ActivityCompat.requestPermissions(this@MainActivity, permissions, LOCATION_REQUEST)

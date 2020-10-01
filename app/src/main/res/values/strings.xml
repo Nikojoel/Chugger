@@ -9,7 +9,7 @@
     <string name="dbTag" translatable="false">db</string>
     <string name="chromeErrorString">Error while opening Chrome</string>
     <string name="chromeUrlString" translatable="false">googlechrome://navigate?url=https://www.espruino.com/ide/</string>
-    <string name="locationString">%1$d is needed to use this app</string>
+    <string name="locationString">Location is needed to use this app</string>
     <string name="permissionNeededString">Permission needed</string>
     <string name="turnOnString">Turn on</string>
     <string name="drinkTimeString">Your time was %1s seconds. Would you like to save it?</string>
@@ -66,7 +66,7 @@
     </string>
     <string name="descData2">
         To install the correct JavaScript code, press the wrench icon
-        found on the toolbar to open up the Espruino Web IDE. Code can be found from XXX.
+        found on the toolbar to open up the Espruino Web IDE. Code can be found from GitHub/Nikojoel/Chugger.
         Insert the code to the IDE and send it to Espruino by pressing the RAM button.
         Remember to disconnect the Ruuvi from the IDE after the code is sent.
     </string>
