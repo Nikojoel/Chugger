@@ -80,4 +80,5 @@
     <string name="scanBtnText">Scan</string>
     <string name="pairText">Pair</string>
     <string name="scoreTitle">Fastest Chuggers</string>
+    <string name="noNameText" translatable="false">--</string>
 </resources>
