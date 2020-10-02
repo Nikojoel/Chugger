@@ -41,7 +41,11 @@ class EditUserFragment : Fragment() {
         val ump = ViewModelProvider(this).get(DbUserModel::class.java)
         view.addUserButton.setOnClickListener {
             GlobalScope.launch {
-                val user = User(0, view.editUserName.text.toString(), time, city)
+                var name = view.editUserName.text.toString()
+                if (name.isEmpty()) {
+                    name = getString(R.string.noNameText)
+                }
+                val user = User(0, name, time, city)
                 ump.insertNew(user)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(activity, getString(R.string.savedString), Toast.LENGTH_SHORT).show()

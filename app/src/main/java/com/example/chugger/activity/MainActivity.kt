@@ -181,6 +181,12 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         }
     }
 
+    override fun onBackPressed() {
+        if (!bleFragment.isVisible) {
+            super.onBackPressed()
+        }
+    }
+
     private fun startRunning(data: String) {
         Timber.d(data)
         if (toast) {
