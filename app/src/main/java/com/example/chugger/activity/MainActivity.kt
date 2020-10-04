@@ -99,7 +99,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
     private lateinit var userAddFrag: EditUserFragment
     private lateinit var userDrinkTime: String
     private lateinit var alertFrag: AlertFragment
-    private lateinit var bleFragment: BleScanFragment
     private lateinit var device: BluetoothDevice
     private lateinit var sharedPref: SharedPreferences
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -175,15 +174,10 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         geoCoder = Geocoder(this, Locale.getDefault())
         fusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
             if (task.isSuccessful && task.result != null) {
-                val geocoded = geoCoder.getFromLocation(task.result!!.latitude, task.result!!.longitude, 1)
+                val geocoded =
+                    geoCoder.getFromLocation(task.result!!.latitude, task.result!!.longitude, 1)
                 city = geocoded[0].locality
             }
-        }
-    }
-
-    override fun onBackPressed() {
-        if (!bleFragment.isVisible) {
-            super.onBackPressed()
         }
     }
 
@@ -310,7 +304,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
     }
 
     private fun startBleFragment() {
-        bleFragment = BleScanFragment.newInstance(btAdapter)
+        val bleFragment = BleScanFragment.newInstance(btAdapter)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.main_layout, bleFragment)
@@ -430,6 +424,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
 
     private fun showAlert(permissions: Array<String>) {
         val builder = AlertDialog.Builder(this)
+        builder.setIcon(R.drawable.ic_block)
+        builder.setCancelable(false)
         builder.apply {
             setMessage(getString(R.string.locationString))
             setTitle(getString(R.string.permissionNeededString))
