@@ -28,6 +28,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.blue
+import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.chugger.BuildConfig
