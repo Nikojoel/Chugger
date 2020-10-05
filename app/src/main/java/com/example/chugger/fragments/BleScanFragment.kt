@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.*
 import com.example.chugger.R
+import com.example.chugger.activity.MainActivity
 import kotlinx.android.synthetic.main.fragment_ble_scan.*
 import kotlinx.android.synthetic.main.fragment_ble_scan.view.*
 import kotlinx.coroutines.Dispatchers
@@ -22,10 +23,10 @@ import timber.log.Timber
 import java.lang.Exception
 
 /**
- * @author Nikojoel
- * BleScanFragment
- * Fragment that has functionality to scan for ble devices
- */
+* @author Nikojoel
+* BleScanFragment
+* Fragment that has functionality to scan for ble devices
+*/
 class BleScanFragment : Fragment() {
 
     // Custom uuid that is found from every Ruuvi with the correct firmware
@@ -110,8 +111,13 @@ class BleScanFragment : Fragment() {
         // Register a click listener
         view.scanBtn.setOnClickListener {
             // Start the ble scan
-            startScan()
-            introText.visibility = View.GONE
+            when (btAdapter.isEnabled) {
+                false -> MainActivity.instance.askBtPermission()
+                true -> {
+                    startScan()
+                    introText.visibility = View.GONE
+                }
+            }
         }
 
         // Register a click listener
