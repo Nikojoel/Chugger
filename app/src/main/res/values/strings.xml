@@ -5,7 +5,6 @@
     <string name="connectToastString">"Connected to %1$s"</string>
     <string name="degreesTextString">%1$d degrees</string>
     <string name="connectingToastString">Connecting to %1$s…</string>
-    <string name="stopWatchTag" translatable="false">stopwatch</string>
     <string name="dbTag" translatable="false">db</string>
     <string name="chromeErrorString">Error while opening Chrome</string>
     <string name="chromeUrlString" translatable="false">googlechrome://navigate?url=https://www.espruino.com/ide/</string>
@@ -81,4 +80,6 @@
     <string name="pairText">Pair</string>
     <string name="scoreTitle">Fastest Chuggers</string>
     <string name="noNameText" translatable="false">--</string>
+    <string name="bleTag" translatable="false">ble</string>
+    <string name="watchTag" translatable="false">watch</string>
 </resources>

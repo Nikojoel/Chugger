@@ -40,6 +40,7 @@ import com.example.chugger.fragments.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_ble_scan.*
 import timber.log.Timber
 import java.util.*
 
@@ -166,12 +167,12 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
     }
 
     override fun onBackPressed() {
-        val bleFrag = supportFragmentManager.findFragmentByTag("ble")
-        val watchFrag = supportFragmentManager.findFragmentByTag("watch")
+        val bleFrag = supportFragmentManager.findFragmentByTag(getString(R.string.bleTag))
+        val watchFrag = supportFragmentManager.findFragmentByTag(getString(R.string.watchTag))
         if (bleFrag != null && bleFrag.isVisible) {
             // Back button not enabled
         } else if (watchFrag != null && watchFrag.isVisible) {
-            // Back button not enabled
+            destroyFragment()
         } else {
             super.onBackPressed()
         }
@@ -202,6 +203,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             showToast(getString(R.string.connectToastString, device.name), Toast.LENGTH_SHORT)
             toast = false
             teksti2.visibility = View.VISIBLE
+            beercanImg.setImageResource(R.drawable.beercan1)
         }
         val accData = data.split(",")
         val accX = accData[0].toFloat() / 1000
@@ -216,7 +218,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             connBtn.visibility = View.INVISIBLE
             teksti2.visibility = View.GONE
             beercanImg.visibility = View.VISIBLE
-            beercanImg.setImageResource(R.drawable.ic_beer1)
         }
         val xAngle = calculateAngle(accX)
         val zAngle = calculateAngle(accZ)
@@ -226,15 +227,25 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         val zDeg = convertToDegree(zAngle)
         if (xDeg > 15) start = true
         if (zDeg < 5) negatives = true
-        teksti.text =
-            if (negatives) getString(
-                R.string.degreesTextString,
-                90 + zDeg.toInt()
-            ) else getString(R.string.degreesTextString, xDeg.toInt())
-        when (xDeg.toInt()) {
-            in 15..30 -> beercanImg.setImageResource(R.drawable.ic_beer2)
-            in 30..60 -> beercanImg.setImageResource(R.drawable.ic_beer3)
-            in 70..90 -> beercanImg.setImageResource(R.drawable.ic_beer4)
+
+        if (negatives) {
+            when (90 + zDeg.toInt()) {
+                in 90..113 -> beercanImg.setImageResource(R.drawable.beercan6)
+                in 113..125 -> beercanImg.setImageResource(R.drawable.beercan7)
+                in 136..159 -> beercanImg.setImageResource(R.drawable.beercan8)
+                in 159..180 -> beercanImg.setImageResource(R.drawable.beercan9)
+            }
+            teksti.text = getString(R.string.degreesTextString, 90 + zDeg.toInt())
+        } else {
+            teksti.text = getString(R.string.degreesTextString, xDeg.toInt())
+        }
+        if (!negatives) {
+            when (xDeg.toInt()) {
+                in 15..34 -> beercanImg.setImageResource(R.drawable.beercan2)
+                in 34..53 -> beercanImg.setImageResource(R.drawable.beercan3)
+                in 53..71 -> beercanImg.setImageResource(R.drawable.beercan4)
+                in 71..90 -> beercanImg.setImageResource(R.drawable.beercan5)
+            }
         }
         // End timer when sensor is placed back on the table
         if (accX < xOffSet && accZ > zOffSetMax && start) {
@@ -311,7 +322,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             if (supportFragmentManager.backStackEntryCount == 0 && deviceAddress == 0.toString()) {
                 deviceAddress = sharedPref.getString(getString(R.string.macKey), 0.toString())
             }
-            Log.d("DBG", "frag manager count: ${supportFragmentManager.backStackEntryCount}")
             if (supportFragmentManager.backStackEntryCount == 0) {
                 connBtn.visibility = View.VISIBLE
                 connBtn.isEnabled = true
@@ -328,7 +338,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         val bleFragment = BleScanFragment.newInstance(btAdapter)
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_layout, bleFragment, "ble")
+            .replace(R.id.main_layout, bleFragment, getString(R.string.bleTag))
             .addToBackStack(null)
             .commit()
     }
@@ -356,7 +366,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         stopWatchFrag = StopWatchFragment.newInstance()
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_layout, stopWatchFrag, "watch")
+            .replace(R.id.main_layout, stopWatchFrag, getString(R.string.watchTag))
             .addToBackStack(null)
             .commit()
     }
