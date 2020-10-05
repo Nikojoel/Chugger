@@ -165,6 +165,18 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         }
     }
 
+    override fun onBackPressed() {
+        val bleFrag = supportFragmentManager.findFragmentByTag("ble")
+        val watchFrag = supportFragmentManager.findFragmentByTag("watch")
+        if (bleFrag != null && bleFrag.isVisible) {
+            // Back button not enabled
+        } else if (watchFrag != null && watchFrag.isVisible) {
+            // Back button not enabled
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         enableMenu(true)
@@ -203,6 +215,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             teksti.visibility = View.VISIBLE
             connBtn.visibility = View.INVISIBLE
             teksti2.visibility = View.GONE
+            beercanImg.visibility = View.VISIBLE
+            beercanImg.setImageResource(R.drawable.ic_beer1)
         }
         val xAngle = calculateAngle(accX)
         val zAngle = calculateAngle(accZ)
@@ -217,7 +231,11 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
                 R.string.degreesTextString,
                 90 + zDeg.toInt()
             ) else getString(R.string.degreesTextString, xDeg.toInt())
-
+        when (xDeg.toInt()) {
+            in 15..30 -> beercanImg.setImageResource(R.drawable.ic_beer2)
+            in 30..60 -> beercanImg.setImageResource(R.drawable.ic_beer3)
+            in 70..90 -> beercanImg.setImageResource(R.drawable.ic_beer4)
+        }
         // End timer when sensor is placed back on the table
         if (accX < xOffSet && accZ > zOffSetMax && start) {
             destroyFragment()
@@ -253,13 +271,14 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         startAlertFragment()
     }
 
-    private fun destroyFragment() {
+    fun destroyFragment() {
         supportFragmentManager.popBackStack()
         gatt.close()
         setBooleans()
         teksti.visibility = View.GONE
         connBtn.visibility = View.VISIBLE
         teksti2.visibility = View.GONE
+        beercanImg.visibility = View.GONE
     }
 
     private fun connectDevice() {
@@ -309,7 +328,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         val bleFragment = BleScanFragment.newInstance(btAdapter)
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_layout, bleFragment)
+            .replace(R.id.main_layout, bleFragment, "ble")
             .addToBackStack(null)
             .commit()
     }
@@ -337,7 +356,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         stopWatchFrag = StopWatchFragment.newInstance()
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_layout, stopWatchFrag)
+            .replace(R.id.main_layout, stopWatchFrag, "watch")
             .addToBackStack(null)
             .commit()
     }
@@ -405,7 +424,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         return true
     }
 
-    private fun askBtPermission() {
+    fun askBtPermission() {
         val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
         startActivity(enableBtIntent)
     }
