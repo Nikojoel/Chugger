@@ -18,7 +18,7 @@
         <gradient
             android:type="sweep"
             android:useLevel="false"
-            android:startColor="@color/progBar1"
+            android:startColor="@color/progBar2"
             android:endColor="@color/progBar2"
             android:angle="0"/>
 

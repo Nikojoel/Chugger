@@ -17,7 +17,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/DarkColorPrimary</item>
         <item name="colorPrimaryDark">@color/DarkColorPrimaryDark</item>
-        <item name="colorAccent">@color/DarkColorAccent</item>
+        <item name="colorAccent">#000000</item>
         <item name="android:textColorSecondary">@color/nfcText</item>
     </style>
 
