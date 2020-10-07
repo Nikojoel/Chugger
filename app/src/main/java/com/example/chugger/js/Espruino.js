@@ -7,7 +7,7 @@ setInterval(function () {
   var temp = `${Ruuvitag.getEnvData().temp.toFixed(1)}`;
   var pres = `${Ruuvitag.getEnvData().pressure.toFixed(1)}`;
   var humid = `${Ruuvitag.getEnvData().humidity.toFixed(1)}`;
-  var json = `{${battery},${temp},${pres},${humid}}`;
+  var json = `${battery},${temp},${pres},${humid}`;
   NRF.nfcURL(json);
 }, 5000);
 
