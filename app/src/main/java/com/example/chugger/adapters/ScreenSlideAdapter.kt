@@ -22,3 +22,4 @@ class ScreenSlideAdapter(fragment: Fragment): FragmentStateAdapter(fragment) {
      */
     override fun createFragment(position: Int): Fragment = SwipeFragment.newInstance(position)
 }
+/* EOF */

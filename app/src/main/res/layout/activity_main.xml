@@ -24,7 +24,7 @@
         />
 
     <TextView
-        android:id="@+id/teksti"
+        android:id="@+id/degreeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="174dp"
@@ -38,7 +38,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/teksti2"
+        android:id="@+id/readyText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="152dp"
@@ -65,7 +65,7 @@
         android:background="@drawable/rounded_button"
         android:text="@string/startBtnString"
         android:textColor="@color/nfcText"
-        app:layout_constraintBottom_toTopOf="@+id/teksti"
+        app:layout_constraintBottom_toTopOf="@+id/degreeText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tool_bar" />
