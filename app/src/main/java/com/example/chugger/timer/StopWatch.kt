@@ -70,3 +70,4 @@ class Stopwatch {
         return currentTime
     }
 }
+/* EOF */

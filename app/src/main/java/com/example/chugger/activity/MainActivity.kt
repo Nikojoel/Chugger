@@ -12,24 +12,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.net.Uri
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.blue
-import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.chugger.BuildConfig
@@ -40,7 +33,6 @@ import com.example.chugger.fragments.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_ble_scan.*
 import timber.log.Timber
 import java.util.*
 
@@ -122,7 +114,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
 
         instance = this
         setSupportActionBar(findViewById(R.id.tool_bar))
-
         hasPermissions()
         askBtPermission()
 
@@ -144,8 +135,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             connBtn.visibility = View.GONE
         }
 
-        teksti.visibility = View.GONE
-        teksti2.visibility = View.GONE
+        degreeText.visibility = View.GONE
+        readyText.visibility = View.GONE
 
         listenBackStack()
 
@@ -199,10 +190,10 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
     private fun startRunning(data: String) {
         Timber.d(data)
         if (toast) {
-            teksti.visibility = View.INVISIBLE
+            degreeText.visibility = View.INVISIBLE
             showToast(getString(R.string.connectToastString, device.name), Toast.LENGTH_SHORT)
             toast = false
-            teksti2.visibility = View.VISIBLE
+            readyText.visibility = View.VISIBLE
             beercanImg.setImageResource(R.drawable.beercan1)
         }
         val accData = data.split(",")
@@ -214,9 +205,9 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             Timber.d("start")
             firstTime = false
             startStopWatchFragment()
-            teksti.visibility = View.VISIBLE
+            degreeText.visibility = View.VISIBLE
             connBtn.visibility = View.INVISIBLE
-            teksti2.visibility = View.GONE
+            readyText.visibility = View.GONE
             beercanImg.visibility = View.VISIBLE
         }
         val xAngle = calculateAngle(accX)
@@ -235,9 +226,9 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
                 in 136..159 -> beercanImg.setImageResource(R.drawable.beercan8)
                 in 159..180 -> beercanImg.setImageResource(R.drawable.beercan9)
             }
-            teksti.text = getString(R.string.degreesTextString, 90 + zDeg.toInt())
+            degreeText.text = getString(R.string.degreesTextString, 90 + zDeg.toInt())
         } else {
-            teksti.text = getString(R.string.degreesTextString, xDeg.toInt())
+            degreeText.text = getString(R.string.degreesTextString, xDeg.toInt())
         }
         if (!negatives) {
             when (xDeg.toInt()) {
@@ -286,9 +277,9 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         supportFragmentManager.popBackStack()
         gatt.close()
         setBooleans()
-        teksti.visibility = View.GONE
+        degreeText.visibility = View.GONE
         connBtn.visibility = View.VISIBLE
-        teksti2.visibility = View.GONE
+        readyText.visibility = View.GONE
         beercanImg.visibility = View.GONE
     }
 
