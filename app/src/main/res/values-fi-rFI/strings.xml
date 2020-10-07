@@ -33,11 +33,11 @@
     <string name="titleData1">Eka</string>
     <string name="titleData2">Toka</string>
     <string name="titleData3">Kolmas</string>
-    <string name="descData1">Eka</string>
-    <string name="descData2">Toka</string>
-    <string name="descData3">Kolmas</string>
+    <string name="descData1">Sovellus on suunniteltu käyttämään RuuviTagia Espruino v1.93 firmwarea. Firmware ohjeet löydät Ruuvin virallisilta sivuilta lab.ruuvi.com/dfu ja valitse kolmas linkki (Espruino JavaScript Interpreter).</string>
+    <string name="descData2">Asenna oikea JavaScript koodi, paina jakoavain ikonia toolbarissa ja avaa Espruino Web IDE. Koodi löytyy githubista Github/Nikojoel/Chugger. Laita koodi IDE:hen ja lähetä se Espruinolle painamalla RAM nappulaa. Muista katkaista yhteys Ruuvista koodin lähetyksen jälkeen.</string>
+    <string name="descData3">Ennen kuin alotat juomisen, aseta RuuviTag tölkinhihan pohjalle ja aseta tölkkisi sen päälle. Varmista että RuuviTag on oikein päin ja merkki osoittaa sinua kohti. Paina start nappulaa kerran ja odota että teksti kertoo sensorin olevan valmis. Aseta tölkki tasaiselle alustalle pysäyttääksesi sekuntikellon ja saadaksesi ajan.</string>
     <string name="titleData0">Nolla</string>
-    <string name="descData0">Nolla</string>
+    <string name="descData0">Chugger on loistava sovellus juomiskilpailujen pitämiseen perheen ja kavereiden kesken! Käytä sitä juomisaikojen tallennukseen, sijaintiin, sekä näkemään kuka on nopein Chuggaaja. Voit käyttää mitä tahansa juomaa, mutta suosittelemme olutta. Kehittänyt Niko Holopainen ja Jalmari Espo</string>
     <string name="getStartedBtnString">Valmis</string>
     <string name="scanningText">Etsitään...</string>
     <string name="scanBtnText">Etsi</string>
