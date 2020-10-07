@@ -15,50 +15,50 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center|bottom"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tool_bar">
 
         <ImageView
             android:id="@+id/beercanImg"
             android:layout_width="200dp"
-            android:layout_height="200dp"
-            />
+            android:layout_height="200dp" />
 
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        >
-        <Button
-            android:id="@+id/connBtn"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_button"
-            android:text="@string/startBtnString"
-            android:textColor="@color/nfcText" />
-        <TextView
-            android:id="@+id/readyText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:text="@string/getStartedBtnString"
-            android:textColor="@color/nfcText"
-            android:layout_marginTop="20dp"
-            android:textSize="36sp" />
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/degreeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:textColor="@color/nfcText"
-            android:textSize="36sp" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/connBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_button"
+                android:text="@string/startBtnString"
+                android:textColor="@color/nfcText" />
+
+            <TextView
+                android:id="@+id/readyText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="monospace"
+                android:text="@string/getStartedBtnString"
+                android:textColor="@color/nfcText"
+                android:textSize="36sp" />
+
+            <TextView
+                android:id="@+id/degreeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:textColor="@color/nfcText"
+                android:textSize="36sp" />
+        </LinearLayout>
 
     </LinearLayout>
 
