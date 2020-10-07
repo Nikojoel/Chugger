@@ -61,7 +61,7 @@
     <string name="descData1">
         The application is designed to use RuuviTag with the Espruino v1.93 firmware.
         For the firmware instructions, please refer to the official Ruuvi documentation at
-        lab.ruuvi.com/dfu and choose the option 3 (Espruino JavaScript Interpreter).
+        lab.ruuvi.com/dfu or check out the instructions from GitHub/Nikojoel/Chugger.
     </string>
     <string name="descData2">
         To install the correct JavaScript code, press the wrench icon

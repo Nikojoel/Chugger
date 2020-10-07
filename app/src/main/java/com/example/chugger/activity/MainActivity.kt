@@ -293,7 +293,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             degreeText.visibility = View.VISIBLE
             connBtn.visibility = View.INVISIBLE
             readyText.visibility = View.GONE
-            beercanImg.visibility = View.VISIBLE
         }
 
         // Calculate angles
