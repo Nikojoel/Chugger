@@ -48,3 +48,4 @@ class RecyclerViewAdapter(private val users: List<User>) : RecyclerView.Adapter<
  */
 class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 }
+/* EOF */

@@ -46,18 +46,17 @@ class Stopwatch {
      * Return the elapsed time in seconds
      * @return String
      */
-    fun elapsedSec(): String? {
+    fun elapsedSec(): String {
         var elapsed = ""
         if (running) {
             val time = "${((System.currentTimeMillis() - startTime) / 1000) % 60}"
 
-
-            //Set the time in xx:xx format if 10 seconds has passed
+            // Set the time in xx:xx format if 10 seconds has passed
             if (time.length < 2) elapsed = "0$time:" else elapsed = "$time:"
 
             // Stop the stopwatch at 59 seconds
             if (time.contains("59")) {
-                return null
+                stop()
             }
         }
         return elapsed
@@ -71,3 +70,4 @@ class Stopwatch {
         return currentTime
     }
 }
+/* EOF */

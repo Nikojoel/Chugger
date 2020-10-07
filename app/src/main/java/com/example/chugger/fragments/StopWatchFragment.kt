@@ -3,11 +3,13 @@ package com.example.chugger.fragments
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.chugger.R
+import com.example.chugger.activity.MainActivity
 import com.example.chugger.timer.Stopwatch
 import kotlinx.android.synthetic.main.fragment_stop_watch.*
 import kotlinx.android.synthetic.main.fragment_stop_watch.view.*
@@ -93,13 +95,12 @@ class StopWatchFragment() : Fragment() {
                 // Set textviews
                 view.milliSeconds.text = stopWatch.elapsedMill()
                 view.seconds.text = stopWatch.elapsedSec()
-
-                // Check if time is null (Null after 60 seconds elapsed)
-                if (stopWatch.elapsedSec() == null) {
-                    // Destroy the fragment
-                    activity?.onBackPressed()
+                // Check if time is at 58 seconds (1 second delay from sensor)
+                if (stopWatch.elapsedSec().contains("58:")) {
+                    // Destroy the fragment from main activity to close GATT connection
+                    MainActivity.instance.destroyFragment()
                 }
-                // Check if ProgressBar is not null
+                // Check progress bar for null
                 if (progBar != null) {
                     // Set progress
                     progBar.progress = progBar.progress - 1

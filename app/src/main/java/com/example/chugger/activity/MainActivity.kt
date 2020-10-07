@@ -12,24 +12,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.net.Uri
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.blue
-import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.chugger.BuildConfig
@@ -121,7 +114,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
 
         instance = this
         setSupportActionBar(findViewById(R.id.tool_bar))
-
         hasPermissions()
         askBtPermission()
 
@@ -143,8 +135,8 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             connBtn.visibility = View.GONE
         }
 
-        teksti.visibility = View.GONE
-        teksti2.visibility = View.GONE
+        degreeText.visibility = View.GONE
+        readyText.visibility = View.GONE
 
         listenBackStack()
 
@@ -162,6 +154,18 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
                     enableMenu(false)
                 }
             }
+        }
+    }
+
+    override fun onBackPressed() {
+        val bleFrag = supportFragmentManager.findFragmentByTag(getString(R.string.bleTag))
+        val watchFrag = supportFragmentManager.findFragmentByTag(getString(R.string.watchTag))
+        if (bleFrag != null && bleFrag.isVisible) {
+            // Back button not enabled
+        } else if (watchFrag != null && watchFrag.isVisible) {
+            destroyFragment()
+        } else {
+            super.onBackPressed()
         }
     }
 
@@ -186,10 +190,11 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
     private fun startRunning(data: String) {
         Timber.d(data)
         if (toast) {
-            teksti.visibility = View.INVISIBLE
+            degreeText.visibility = View.INVISIBLE
             showToast(getString(R.string.connectToastString, device.name), Toast.LENGTH_SHORT)
             toast = false
-            teksti2.visibility = View.VISIBLE
+            readyText.visibility = View.VISIBLE
+            beercanImg.setImageResource(R.drawable.beercan1)
         }
         val accData = data.split(",")
         val accX = accData[0].toFloat() / 1000
@@ -200,9 +205,10 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             Timber.d("start")
             firstTime = false
             startStopWatchFragment()
-            teksti.visibility = View.VISIBLE
+            degreeText.visibility = View.VISIBLE
             connBtn.visibility = View.INVISIBLE
-            teksti2.visibility = View.GONE
+            readyText.visibility = View.GONE
+            beercanImg.visibility = View.VISIBLE
         }
         val xAngle = calculateAngle(accX)
         val zAngle = calculateAngle(accZ)
@@ -212,12 +218,26 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         val zDeg = convertToDegree(zAngle)
         if (xDeg > 15) start = true
         if (zDeg < 5) negatives = true
-        teksti.text =
-            if (negatives) getString(
-                R.string.degreesTextString,
-                90 + zDeg.toInt()
-            ) else getString(R.string.degreesTextString, xDeg.toInt())
 
+        if (negatives) {
+            when (90 + zDeg.toInt()) {
+                in 90..113 -> beercanImg.setImageResource(R.drawable.beercan6)
+                in 113..125 -> beercanImg.setImageResource(R.drawable.beercan7)
+                in 136..159 -> beercanImg.setImageResource(R.drawable.beercan8)
+                in 159..180 -> beercanImg.setImageResource(R.drawable.beercan9)
+            }
+            degreeText.text = getString(R.string.degreesTextString, 90 + zDeg.toInt())
+        } else {
+            degreeText.text = getString(R.string.degreesTextString, xDeg.toInt())
+        }
+        if (!negatives) {
+            when (xDeg.toInt()) {
+                in 15..34 -> beercanImg.setImageResource(R.drawable.beercan2)
+                in 34..53 -> beercanImg.setImageResource(R.drawable.beercan3)
+                in 53..71 -> beercanImg.setImageResource(R.drawable.beercan4)
+                in 71..90 -> beercanImg.setImageResource(R.drawable.beercan5)
+            }
+        }
         // End timer when sensor is placed back on the table
         if (accX < xOffSet && accZ > zOffSetMax && start) {
             destroyFragment()
@@ -253,13 +273,14 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         startAlertFragment()
     }
 
-    private fun destroyFragment() {
+    fun destroyFragment() {
         supportFragmentManager.popBackStack()
         gatt.close()
         setBooleans()
-        teksti.visibility = View.GONE
+        degreeText.visibility = View.GONE
         connBtn.visibility = View.VISIBLE
-        teksti2.visibility = View.GONE
+        readyText.visibility = View.GONE
+        beercanImg.visibility = View.GONE
     }
 
     private fun connectDevice() {
@@ -292,7 +313,6 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
             if (supportFragmentManager.backStackEntryCount == 0 && deviceAddress == 0.toString()) {
                 deviceAddress = sharedPref.getString(getString(R.string.macKey), 0.toString())
             }
-            Log.d("DBG", "frag manager count: ${supportFragmentManager.backStackEntryCount}")
             if (supportFragmentManager.backStackEntryCount == 0) {
                 connBtn.visibility = View.VISIBLE
                 connBtn.isEnabled = true
@@ -309,7 +329,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         val bleFragment = BleScanFragment.newInstance(btAdapter)
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_layout, bleFragment)
+            .replace(R.id.main_layout, bleFragment, getString(R.string.bleTag))
             .addToBackStack(null)
             .commit()
     }
@@ -337,7 +357,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         stopWatchFrag = StopWatchFragment.newInstance()
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_layout, stopWatchFrag)
+            .replace(R.id.main_layout, stopWatchFrag, getString(R.string.watchTag))
             .addToBackStack(null)
             .commit()
     }
@@ -405,7 +425,7 @@ class MainActivity : AppCompatActivity(), StopWatchFragment.StopWatchHelper,
         return true
     }
 
-    private fun askBtPermission() {
+    fun askBtPermission() {
         val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
         startActivity(enableBtIntent)
     }
