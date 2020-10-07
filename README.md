@@ -7,6 +7,8 @@ The idea is to create an application which can be used in any events where drink
 
 The intent of this project is to use an external sensor and read data from it with an Android device. Used sensor is called [Ruuvi](https://ruuvi.com/) running the [Espruino Firmware](https://lab.ruuvi.com/espruino/). The sensor is programmed with JavaScript to broadcast acceleration data in `X- and Z-axis` every 1000 milliseconds via GATT connection and to broadcast board data `temperature`, `battery voltage`, `humidity` and `atmospheric pressure` with NFC. The Android application is implemented with Kotlin.
 
+---
+
 ### Feature specification
 * [BluetoothGatt](https://developer.android.com/reference/android/bluetooth/BluetoothGatt)
     * [BLE](https://developer.android.com/guide/topics/connectivity/bluetooth-le)
@@ -21,8 +23,10 @@ The intent of this project is to use an external sensor and read data from it wi
     * [RecyclerView](https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.Adapter)
     * [FragmentState](https://developer.android.com/reference/androidx/viewpager2/adapter/FragmentStateAdapter)
     
+---
 
 ### Sensor configuration
+
 #### By default, the Ruuvi sensor is not broadcasting any GATT data nor is connectable. Therefore, it's needed to update the firmware and flash the correct JavaScript code to it.
 
 ***Note: To use Web Bluetooth features in Chrome, experimental Web Platform features need to be enabled in chrome://flags***
@@ -71,6 +75,8 @@ http://espruino.com/Donate
 ```
 Disonnected from Web Bluetooth, RuuviTag XXXX
 ```
+
+---
 
 ### Application Deployment
 1. Clone or download the repository.
