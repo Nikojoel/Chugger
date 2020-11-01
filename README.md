@@ -83,3 +83,8 @@ Disonnected from Web Bluetooth, RuuviTag XXXX
 `git clone https://github.com/Nikojoel/Chugger.git`
 
 2. Launch it on an Android device and follow the in depth instructions found from the application.
+
+---
+
+### Screenshots
+![1](https://user-images.githubusercontent.com/45162563/97807810-b1808380-1c6b-11eb-8c3a-075b3fb20ca2.png)
